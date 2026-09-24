@@ -1,0 +1,33 @@
+/* mdcccvii.css — AI coach + big-update banner */
+.ai-modal{max-width:720px !important}
+.ai-chips{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px}
+.ai-chip{background:var(--panel);color:var(--text);border:1px solid var(--border);border-radius:20px;padding:7px 13px;font:600 11.5px Inter,system-ui,sans-serif;cursor:pointer;transition:all .18s}
+.ai-chip:hover{border-color:var(--green);background:rgba(139,124,255,.14);transform:translateY(-1px)}
+.ai-log{height:min(340px,42vh);overflow-y:auto;display:flex;flex-direction:column;gap:9px;padding:4px 2px 8px;scroll-behavior:smooth}
+.ai-msg{max-width:88%;padding:10px 14px;border-radius:14px;font-size:13px;line-height:1.6;animation:rise .3s both}
+.ai-msg.me{align-self:flex-end;background:linear-gradient(135deg,#8b7cff,#6f8bff);color:#0b0d12;border-bottom-right-radius:4px;font-weight:500}
+.ai-msg.ai{align-self:flex-start;background:var(--panel);border:1px solid var(--border);border-bottom-left-radius:4px}
+.ai-msg.wait{color:var(--text-dim);animation:softPulse 1.1s infinite}
+.ai-input{display:flex;gap:8px;align-items:flex-end;margin-top:10px}
+.ai-input textarea{flex:1;resize:none;padding:10px 12px;font-size:13px}
+.ai-prop{margin-top:10px;padding:14px 16px;border:1px solid var(--green);border-radius:14px;background:rgba(139,124,255,.08);animation:pop .3s both}
+.ai-prop-t{font-size:10.5px;letter-spacing:1.3px;font-weight:800;color:var(--green);margin-bottom:8px}
+.ai-prop>div:not(.sync-actions):not(.ai-prop-t){display:flex;gap:12px;font-size:12.5px;padding:4px 0;border-bottom:1px solid rgba(255,255,255,.05)}
+.ai-prop span{color:var(--text-dim);min-width:70px}.ai-prop small{display:block;margin-top:8px;color:var(--text-dim);font-size:11.5px}
+.ai-l{display:block;font-size:11px;font-weight:600;color:var(--text-dim);margin:12px 0 5px;letter-spacing:.4px}
+.ai-l a{color:var(--green);margin-left:6px;font-weight:600}
+#aiConnect input,#aiConnect select{width:100%;padding:10px 12px;font-size:12.5px}
+.ai-note{font-size:11.5px;line-height:1.7;color:var(--text-dim);margin:4px 0 6px}
+.ai-cta{border-color:var(--green) !important;color:var(--green) !important}
+#aiBtn{background:linear-gradient(135deg,rgba(139,124,255,.25),rgba(92,200,255,.18)) !important;border-color:rgba(139,124,255,.5) !important}
+@media print{#aiOverlay{display:none !important}}
+
+/* ── BIG UPDATE banner ── */
+.whatsnew.big{padding:18px 24px;gap:18px;background:linear-gradient(105deg,rgba(139,124,255,.30),rgba(92,200,255,.16) 60%,rgba(255,190,85,.12));border-bottom:1px solid rgba(139,124,255,.55);position:relative;overflow:hidden}
+.whatsnew.big::after{content:"";position:absolute;inset:0;background:linear-gradient(100deg,transparent 30%,rgba(255,255,255,.10) 50%,transparent 70%);transform:translateX(-100%);animation:bigShine 3.6s ease-in-out infinite;pointer-events:none}
+@keyframes bigShine{to{transform:translateX(100%)}}
+.whatsnew.big .wn-badge{font-size:11px;padding:6px 14px;background:linear-gradient(90deg,#ffbe55,#ff7ab6) !important;color:#160a00 !important;box-shadow:0 0 24px rgba(255,190,85,.45) !important}
+.whatsnew.big .wn-title{display:block;font-size:17px;font-weight:800;letter-spacing:-.2px;margin-bottom:2px}
+.whatsnew.big .wn-text{font-size:12.5px}
+.whatsnew.big .btn{background:#fff !important;color:#0b0d12 !important;border-color:#fff !important;font-weight:700 !important}
+.ai-tab.active{background:var(--green) !important;color:#0b0d12 !important;border-color:transparent !important}
