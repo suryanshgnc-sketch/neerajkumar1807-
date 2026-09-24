@@ -5545,7 +5545,7 @@ const PROV={
   gemini:{
     label:'Google Gemini',
     model:'gemini-3.8-flash',
-    models:['gemini-3.8-flash','gemini-3.1-flash-lite','gemini-3.1-pro'],
+    models:['gemini-3.8-flash','gemini-3.7-flash','gemini-3.1-flash-lite','gemini-3.1-pro'],
     url:'https://generativelanguage.googleapis.com/v1beta/models/',
     link:'https://aistudio.google.com/apikey',
     help:'Usually the easiest starting point. Google AI Studio creates/manages Gemini API keys.'
@@ -5568,8 +5568,8 @@ const PROV={
   },
   openai:{
     label:'OpenAI',
-    model:'gpt-5.6-luna',
-    models:['gpt-5.6-luna','gpt-5.6-terra','gpt-5.6-sol'],
+    model:'gpt-5.4',
+    models:['gpt-5.4','gpt-5.4-mini','gpt-5.4-pro'],
     url:'https://api.openai.com/v1/chat/completions',
     link:'https://platform.openai.com/api-keys',
     help:'Use your own OpenAI API key. API usage is billed/limited according to your OpenAI account.'
@@ -5656,7 +5656,8 @@ async function callAI(msgs,sys){
     if(!res.ok){
       const m=(data.error&&(data.error.message||data.error))||res.statusText;
       if(res.status===429) throw new Error('Rate limit reached. Wait a little, reduce requests, or switch provider/model.');
-      if(res.status===401||res.status===403) throw new Error('The provider rejected the key. Check the key, model access, billing/free-tier status, and browser restrictions. '+m);
+      if(res.status===400) throw new Error('The provider received your key, but rejected the request. Check the selected model and request format. '+m);
+      if(res.status===401||res.status===403) throw new Error('The key reached the provider but was rejected. Check that you copied the API key (not a project ID), that the model is available to your account, and that billing/free-tier access is enabled. '+m);
       throw new Error('API error '+res.status+': '+m);
     }
     text=cfg.provider==='gemini'
@@ -5873,11 +5874,13 @@ function build(){
   $('aiQuickConnect').onclick=()=>{tab('connect');};
 
   sel.onchange=()=>{cfg.provider=sel.value;cfg.model='';fillConnect();};
-  $('aiSave').onclick=()=>{readForm();persist();msg('Saved ✓ — connection settings are stored only in this browser.');paintStatus();};
+  $('aiSave').onclick=()=>{readForm();persist();$('aiKey').value=cfg.key;msg(cfg.key ? 'Saved ✓ Key is stored in this browser. Press TEST CONNECTION to verify that the provider accepts it.' : 'Saved, but no key was entered.', !cfg.key);paintStatus();};
   $('aiForget').onclick=()=>{cfg.key='';persist();$('aiKey').value='';msg('Key removed from this browser.');paintStatus();};
   $('aiTest').onclick=async()=>{
     readForm();msg('Testing the connection…');
     try{
+      if(!cfg.key) throw new Error('Paste your API key first.');
+      persist();
       const t=await callAI([{role:'user',content:'Reply with only this JSON: {"reply":"ONLINE"}'}],
         'Return only valid JSON {"reply":"ONLINE"}');
       const r=parseReply(t);msg('✓ Connected — '+String(r.reply||'ONLINE').slice(0,80));persist();paintStatus();
@@ -5894,13 +5897,25 @@ function build(){
   $('aiAutoApply').onchange=()=>{cfg.autoApply=$('aiAutoApply').checked;persist();};
   fillConnect();refreshName();paintStatus();
 }
+function cleanKey(v){ return String(v||'').trim().replace(/^['\"]|['\"]$/g,'').replace(/^Bearer\s+/i,'').trim(); }
 function readForm(){
   cfg.provider=$('aiProv').value;
-  cfg.model=$('aiModel').value.trim();
-  cfg.key=$('aiKey').value.trim();
+  const p=PROV[cfg.provider]||PROV.gemini;
+  cfg.model=$('aiModel').value.trim()||p.model;
+  cfg.key=cleanKey($('aiKey').value);
   cfg.url=$('aiUrl').value.trim();
 }
 function persist(){store.set(CFG_KEY,JSON.stringify(cfg));}
+function keyLooksValid(){
+  const k=String(cfg.key||'');
+  if(!k) return false;
+  if(k.length<12) return false;
+  if(/^AIzaSy/i.test(k)) return true;
+  if(/^gsk_/i.test(k)) return true;
+  if(/^sk-or-/i.test(k)) return true;
+  if(/^sk-[A-Za-z0-9]/.test(k)) return true;
+  return cfg.provider==='custom';
+}
 function fillConnect(){
   const p=PROV[cfg.provider]||PROV.gemini;
   $('aiProv').value=cfg.provider;
