@@ -159,3 +159,16 @@ footer{background:#000!important;border-color:#111!important;color:#444!importan
   nav.chlist{position:sticky!important;top:104px!important;height:calc(100vh - 120px)!important;overflow:auto!important;background:#000!important;}
   main{padding:20px 24px 50px!important;}
 }
+
+
+/* v5 — near-black surface system */
+:root{
+  --glass:rgba(8,9,11,.88);
+  --line:rgba(255,255,255,.075);
+  --shadow:0 16px 42px rgba(0,0,0,.58);
+}
+body{background:#020304 !important;color:#e7e8eb}
+#auroraField{opacity:.12 !important}
+.card,.mission-card,.chapter-card{background:linear-gradient(180deg,rgba(11,12,14,.94),rgba(6,7,8,.96)) !important}
+header{background:rgba(4,5,6,.94) !important}
+.log-modal{background:linear-gradient(180deg,#0a0b0d,#050607) !important}

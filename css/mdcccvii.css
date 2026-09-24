@@ -31,3 +31,78 @@
 .whatsnew.big .wn-text{font-size:12.5px}
 .whatsnew.big .btn{background:#fff !important;color:#0b0d12 !important;border-color:#fff !important;font-weight:700 !important}
 .ai-tab.active{background:var(--green) !important;color:#0b0d12 !important;border-color:transparent !important}
+
+
+/* ==========================================================
+   v5 AI CONTROL CENTER
+   ========================================================== */
+.ai-modal{max-width:940px !important;background:
+  radial-gradient(circle at 85% 0%,rgba(115,90,255,.09),transparent 34%),
+  linear-gradient(180deg,#090a0c 0%,#050607 100%) !important;
+  border-color:rgba(255,255,255,.10) !important;box-shadow:0 35px 110px rgba(0,0,0,.85) !important}
+.ai-title-wrap{display:flex;align-items:center;gap:11px}
+.ai-orb{width:32px;height:32px;border-radius:10px;display:grid;place-items:center;
+  color:#fff;background:linear-gradient(145deg,#17171b,#050506);border:1px solid rgba(255,255,255,.12);
+  box-shadow:0 0 28px rgba(124,107,255,.22),inset 0 0 20px rgba(255,255,255,.04)}
+.ai-statusbar{display:flex;align-items:center;gap:8px;padding:8px 10px;margin-bottom:11px;
+  background:#090a0c;border:1px solid rgba(255,255,255,.07);border-radius:10px;font-size:10.5px;color:var(--text-dim)}
+#aiStatusDot{width:7px;height:7px;border-radius:50%;background:#555;box-shadow:none}
+#aiStatusDot.on{background:#63e6a2;box-shadow:0 0 12px rgba(99,230,162,.7)}
+.ai-statusbar .btn{margin-left:auto}
+.ai-chips{gap:7px}
+.ai-chip{background:#0a0b0d;border-color:rgba(255,255,255,.09);color:#d7d9de}
+.ai-chip:hover{background:#111216;border-color:rgba(124,107,255,.65);box-shadow:0 8px 25px rgba(0,0,0,.4)}
+.ai-log{height:min(360px,43vh);padding:7px 4px 12px}
+.ai-msg{box-shadow:0 10px 30px rgba(0,0,0,.18)}
+.ai-msg.me{background:linear-gradient(135deg,#e7e8eb,#b8bbc3);color:#07080a}
+.ai-msg.ai{background:#0b0c0e;border-color:rgba(255,255,255,.08);color:#e3e5e9}
+.ai-input{border-top:1px solid rgba(255,255,255,.06);padding-top:10px}
+.ai-input textarea{background:#090a0c !important;border-color:rgba(255,255,255,.10) !important;min-height:44px}
+.ai-prop{background:linear-gradient(180deg,#0d0e10,#090a0c);border-color:rgba(99,230,162,.35);box-shadow:0 15px 40px rgba(0,0,0,.35)}
+.ai-prop-t{color:#72e6aa}
+.ai-action-row{align-items:flex-start !important;gap:10px !important}
+.ai-action-row span{font-size:8px;letter-spacing:1.2px;color:#6c7078 !important;min-width:48px !important;padding-top:2px}
+.ai-action-row b{font-weight:600;color:#e8e9ec}
+.connect-hero{padding:14px 15px;margin-bottom:14px;border:1px solid rgba(124,107,255,.18);border-radius:12px;
+  background:linear-gradient(110deg,rgba(124,107,255,.08),rgba(255,255,255,.015))}
+.connect-kicker,.guide-title{font-size:8px;letter-spacing:1.6px;font-weight:800;color:#8e94a0}
+.connect-hero h3{margin:3px 0 4px;font-size:19px;color:#f0f1f3}
+.connect-hero p{margin:0;max-width:760px;color:#969aa4;font-size:11.5px;line-height:1.65}
+.connection-grid{display:grid;grid-template-columns:minmax(0,1.2fr) minmax(280px,.8fr);gap:14px}
+.connection-main,.beginner-guide{background:#08090b;border:1px solid rgba(255,255,255,.07);border-radius:12px;padding:14px}
+.provider-help{font-size:10.5px;line-height:1.5;color:#7f838c;margin-top:6px;padding:7px 9px;border-radius:7px;background:#0c0d0f}
+.key-row{display:flex;gap:7px}.key-row input{flex:1}
+.connect-actions{display:flex;gap:7px;flex-wrap:wrap;margin-top:13px}
+.connect-actions .btn{flex:1;min-width:120px}
+.privacy-box{margin-top:12px;padding:10px 11px;border-radius:9px;background:#0b0d0e;border:1px solid rgba(99,230,162,.13);
+  color:#858a93;font-size:10.5px;line-height:1.65}
+.privacy-box b:first-child{color:#b9e9ce}
+.guide-title{margin-bottom:10px}
+.guide-step{display:flex;gap:9px;margin:0 0 9px;align-items:flex-start;color:#a9adb5;font-size:10.5px;line-height:1.55}
+.guide-step i{font-style:normal;flex:0 0 19px;height:19px;border-radius:6px;display:grid;place-items:center;
+  background:#121317;color:#dfe1e5;border:1px solid rgba(255,255,255,.08);font-size:9px;font-weight:800}
+.guide-link{display:block;margin-top:12px;padding:9px;text-align:center;border-radius:8px;
+  background:#111216;border:1px solid rgba(124,107,255,.22);color:#cfd1ff !important;font-size:9px;font-weight:800;letter-spacing:.7px}
+.guide-faq{margin-top:13px;padding-top:11px;border-top:1px solid rgba(255,255,255,.06);display:grid;gap:4px}
+.guide-faq b{font-size:9px;color:#d9dbe0;margin-top:5px}
+.guide-faq span{font-size:9.5px;line-height:1.55;color:#747983}
+.advanced-connection{margin-top:14px;background:#08090b;border:1px solid rgba(255,255,255,.07);border-radius:12px;padding:12px 14px}
+.advanced-head{display:flex;justify-content:space-between;gap:10px;align-items:center;color:#c9cbd0;font-size:10.5px}
+.advanced-head label{font-size:9.5px;color:#7d818a;display:flex;align-items:center;gap:5px}
+.rename-row{display:flex;justify-content:space-between;gap:14px;align-items:center;margin-top:11px;padding-top:11px;border-top:1px solid rgba(255,255,255,.05)}
+.rename-row b{display:block;font-size:10.5px;color:#e3e5e8}
+.rename-row small{display:block;color:#70747d;font-size:9.5px;margin-top:3px}
+.rename-row>div:last-child{display:flex;gap:6px;min-width:300px}
+.rename-row input{width:100%;padding:8px 10px;font-size:11px}
+.cap-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:9px}
+.cap-card{padding:13px;background:#08090b;border:1px solid rgba(255,255,255,.07);border-radius:11px;min-height:104px}
+.cap-card b{display:block;color:#e5e6e9;font-size:11px;margin-bottom:6px}
+.cap-card span{display:block;color:#7d818a;font-size:10px;line-height:1.6}
+.about-note{margin-top:12px;padding:11px;border:1px solid rgba(255,255,255,.07);border-radius:10px;color:#858991;font-size:10.5px;line-height:1.65;background:#08090b}
+.about-note b{color:#c9ccd1}
+@media(max-width:760px){
+ .connection-grid,.cap-grid{grid-template-columns:1fr}
+ .rename-row{display:block}.rename-row>div:last-child{min-width:0;margin-top:8px}
+ .ai-modal{max-width:calc(100vw - 18px) !important}
+ .log-modal-head{align-items:flex-start}
+}

@@ -1,36 +1,45 @@
-# Neeraj Kumar — Physical Chemistry Tracker · v4.0
+# Neeraj Kumar — Physical Chemistry Tracker · v5.0
 
-A gamified JEE 2027 Physical Chemistry study tracker (XP, levels, streaks, planner, daily log, chapter journey).
+A black-first, gamified JEE Physical Chemistry planner with a configurable personal AI assistant.
 
-**v4.0 — BIG UPDATE: ✦ MDCCCVII**, an AI study coach inside the Planner (bring your own API key: Gemini / Groq / OpenRouter / custom). Made by **suryansh1807**.
+## v5.0 — AI connection + planner control upgrade
+
+**AI assistant**
+- The old `MDCCCVII` name is now only the default. Rename the assistant from **CONNECT → Assistant settings**.
+- Connect your own Google Gemini, Groq, OpenRouter, OpenAI, or OpenAI-compatible API.
+- Beginner-first connection guide explains what an API key is, where to get it, what model to choose, how to test it, and what common errors mean.
+- The assistant receives a compact live snapshot of the planner rather than the API key.
+- The assistant can propose changes to **pace, deadline, chapter order, chapter skips, section skips, custom section counts, and locked-plan lifecycle**.
+- Review the exact changes, then apply them. Optional **automatic planner changes** mode is available in Assistant settings.
+- API keys are kept in browser local storage and are not included in tracker state/cloud exports. For a public deployment, use a server-side proxy instead of exposing a reusable secret in browser code.
 
 ## Quick start
+
 | I want to… | Do this |
 |---|---|
-| Just use it | Open `dist/neeraj-kumar-chem-tracker-v4.html` in any browser |
+| Just use it | Open `dist/neeraj-kumar-chem-tracker-v5.html` in a browser |
 | Edit it | Change files in `css/` and `js/`, open `index.html` to preview |
-| Share one file | Run `python3 build.py` → new single file in `dist/` |
+| Share one file | Run `python3 build.py` → new single-file build |
 
 ## Project structure
-```
-chem-tracker/
-├── index.html              Page markup (header, panels, modals) — links css/js below
-├── build.py                Bundles everything into ONE portable HTML file
-├── css/
-│   ├── styles.css          Original v1 styles (core layout, gamification)
-│   ├── enhancements.css    v4.0 visual polish — edit the :root tokens to re-theme
-│   └── cloud.css           "What's new" banner + Cloud Sync modal styles
-├── js/
-│   ├── app.js              Core app: state, XP, chapters, planner, log, stats
-│   ├── reorder.js          Numbered chapter re-ordering panel
-│   ├── mdcccvii.js         MDCCCVII AI coach (BYO key, proposals need APPLY)
-│   ├── cloud.js            Cloud Sync engine (GitHub Gist) + tabbed beginner guide
-│   └── whatsnew.js         New-version banner and NEW badge
-├── dist/                   Generated single-file build
-└── docs/CUSTOMIZING.md     "How do I change X?" cheat-sheet
-```
-Load order matters: `app.js` → `reorder.js` → `cloud.js` → `whatsnew.js`
-(later files extend functions defined earlier, e.g. `cloud.js` wraps `saveState`).
 
-## Credits
+```text
+chem-tracker/
+├── index.html
+├── build.py
+├── css/
+├── js/
+│   ├── app.js
+│   ├── reorder.js
+│   ├── mdcccvii.js       AI assistant + connection guide + planner actions
+│   ├── cloud.js
+│   └── whatsnew.js
+├── dist/
+└── docs/
+```
+
+## Security note
+
+This is a client-side BYO-key implementation. A browser app cannot make a reusable API secret truly secret from the browser. For a personal/local tracker this can be convenient; for a public multi-user website, put the provider call behind your own backend/serverless function and never ship your provider secret to visitors.
+
 Made by **suryansh1807**.
