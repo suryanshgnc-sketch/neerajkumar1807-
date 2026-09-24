@@ -122,3 +122,16 @@ body:has(.log-overlay.open),body:has(.bm-overlay.open){overflow:hidden}
 nav.chlist #chItems>*{background:var(--panel) !important;border:1px solid var(--border) !important}
 nav.chlist #chItems>*:hover{background:#1a2030 !important;border-color:#2e3648 !important}
 nav.chlist #chItems>.active,nav.chlist #chItems>.on{border-color:var(--green) !important}
+
+/* v5.1 — universal scrolling fix */
+html, body { min-height:100%; height:auto !important; overflow-x:hidden !important; overflow-y:auto !important; }
+.layout { min-height:calc(100vh - var(--hh)); }
+.log-overlay, .bm-overlay { overflow-x:hidden !important; overflow-y:auto !important; -webkit-overflow-scrolling:touch !important; overscroll-behavior:contain !important; }
+.log-modal, .bm-overlay .modal-content { max-height:none !important; overflow:visible !important; }
+.ai-modal { max-height:calc(100vh - 30px) !important; overflow-y:auto !important; overflow-x:hidden !important; -webkit-overflow-scrolling:touch !important; }
+.ai-modal #aiCoach, .ai-modal #aiConnect, .ai-modal #aiAbout { min-height:0; }
+.ai-modal .connection-grid, .ai-modal .beginner-guide, .ai-modal .connection-main { min-width:0; }
+@media (max-width:760px) {
+  .log-overlay, .bm-overlay { padding:12px 8px !important; }
+  .ai-modal { max-height:calc(100vh - 16px) !important; }
+}
