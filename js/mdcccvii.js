@@ -8,7 +8,7 @@
 (function(){
 'use strict';
 
-const CFG_KEY='nkMDCCCVII_cfg_v5', SEEN_KEY='nkMDCCCVII_seen_v5';
+const CFG_KEY='nkMDCCCVII_cfg_v5', HISTORY_KEY='nkMDCCCVII_history_v5', SEEN_KEY='nkMDCCCVII_seen_v5';
 const store={
   get:k=>{try{return localStorage.getItem(k);}catch(e){return null;}},
   set:(k,v)=>{try{localStorage.setItem(k,v);}catch(e){}},
@@ -60,7 +60,11 @@ const defaults={provider:'gemini',model:'',key:'',url:'',name:'MDCCCVII',autoApp
 function loadCfg(){
   try{return Object.assign({},defaults,JSON.parse(store.get(CFG_KEY)||'{}'));}catch(e){return Object.assign({},defaults);}
 }
-let cfg=loadCfg(), history=[], proposal=null, busy=false;
+let cfg=loadCfg(), history=loadHistory(), proposal=null, busy=false;
+function loadHistory(){ try{ const x=JSON.parse(store.get(HISTORY_KEY)||'[]'); return Array.isArray(x)?x.filter(m=>m&&['user','assistant'].includes(m.role)&&typeof m.content==='string').slice(-80):[]; }catch(e){ return []; }}
+function persistHistory(){ store.set(HISTORY_KEY, JSON.stringify(history.slice(-80))); }
+function clearHistory(){ history=[]; persistHistory(); const l=$('aiLog'); if(l) l.innerHTML=''; addMsg('ai',`Chat cleared. I’m ${name()} and I’m ready for the next task.`); }
+function exportHistory(){ const blob=new Blob([JSON.stringify({assistant:name(),exported:new Date().toISOString(),messages:history},null,2)],{type:'application/json'}); const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='mdcccvii-chat.json'; a.click(); setTimeout(()=>URL.revokeObjectURL(a.href),500); }
 
 const $=id=>document.getElementById(id);
 const esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
@@ -127,11 +131,12 @@ async function callAI(msgs,sys){
     }
     data=await res.json().catch(()=>({}));
     if(!res.ok){
-      const m=(data.error&&(data.error.message||data.error))||res.statusText;
-      if(res.status===429) throw new Error('Rate limit reached. Wait a little, reduce requests, or switch provider/model.');
-      if(res.status===400) throw new Error('The provider received your key, but rejected the request. Check the selected model and request format. '+m);
-      if(res.status===401||res.status===403) throw new Error('The key reached the provider but was rejected. Check that you copied the API key (not a project ID), that the model is available to your account, and that billing/free-tier access is enabled. '+m);
-      throw new Error('API error '+res.status+': '+m);
+      const m=(data.error&&(data.error.message||data.error))||res.statusText||'Unknown provider error';
+      if(res.status===429) throw new Error('PROVIDER_RATE_LIMIT: '+m);
+      if(res.status===503) throw new Error('PROVIDER_TEMPORARY: '+m);
+      if(res.status===400) throw new Error('REQUEST_REJECTED: '+m);
+      if(res.status===401||res.status===403) throw new Error('AUTH_FAILED: '+m);
+      throw new Error('API_ERROR_'+res.status+': '+m);
     }
     text=cfg.provider==='gemini'
       ?((data.candidates?.[0]?.content?.parts||[]).map(x=>x.text||'').join(''))
@@ -264,6 +269,7 @@ function build(){
 
    <div id="aiCoach">
      <div class="ai-statusbar"><span id="aiStatusDot"></span><span id="aiStatusText">Not connected</span><button class="btn sm" id="aiQuickConnect">SET UP AI</button></div>
+     <div class="ai-chat-tools"><span>LOCAL CHAT HISTORY · NO APP MESSAGE CAP</span><button class="btn sm" id="aiExportChat">EXPORT CHAT</button><button class="btn sm danger" id="aiClearChat">CLEAR CHAT</button></div>
      <div class="ai-chips">
        <button class="ai-chip" data-q="Look at my entire planner and tell me what I should change first.">🧭 Audit planner</button>
        <button class="ai-chip" data-q="Make a realistic day-wise plan from today using my current backlog.">🗓 Build plan</button>
@@ -343,6 +349,8 @@ function build(){
   o.querySelectorAll('.ai-tab').forEach(b=>b.onclick=()=>tab(b.dataset.t));
   o.querySelectorAll('.ai-chip').forEach(b=>b.onclick=()=>send(b.dataset.q));
   $('aiSend').onclick=()=>send($('aiText').value);
+  $('aiClearChat').onclick=()=>{if(confirm('Clear this AI conversation?')) clearHistory();};
+  $('aiExportChat').onclick=exportHistory;
   $('aiText').addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();send($('aiText').value);}});
   $('aiQuickConnect').onclick=()=>{tab('connect');};
 
@@ -535,13 +543,19 @@ async function send(text){
   busy=true;$('aiText').value='';proposal=null;showProposal();addMsg('me',text);
   const wait=addMsg('ai',name()+' is thinking…');wait.classList.add('wait');
   try{
-    const msgs=[...history.slice(-8),{role:'user',content:'LIVE PLANNER DATA:\n'+JSON.stringify(snapshot())+'\n\nSTUDENT REQUEST: '+text}];
-    const r=parseReply(await callAI(msgs,SYS()));
+    const msgs=[...history.slice(-12),{role:'user',content:'LIVE PLANNER DATA:\n'+JSON.stringify(snapshot())+'\n\nSTUDENT REQUEST: '+text}];
+    let raw, lastErr;
+    for(let attempt=0;attempt<3;attempt++){
+      try{ raw=await callAI(msgs,SYS()); break; }
+      catch(e){ lastErr=e; const m=String(e.message||''); if(!m.startsWith('PROVIDER_TEMPORARY:') || attempt===2) throw e; wait.textContent=name()+' is retrying… ('+(attempt+1)+'/2)'; await new Promise(r=>setTimeout(r,1000*Math.pow(2,attempt))); }
+    }
+    const r=parseReply(raw);
     history.push({role:'user',content:text},{role:'assistant',content:String(r.reply||'')});
+    persistHistory();
     wait.remove();addMsg('ai',String(r.reply||'…'));
     proposal={actions:validActions(r.actions),why:String(r.why||'')};
     showProposal();
-  }catch(e){wait.remove();addMsg('ai','⚠ '+e.message);}
+  }catch(e){wait.remove(); const m=String(e.message||e); let friendly=m; if(m.startsWith('PROVIDER_RATE_LIMIT:')) friendly='⏳ The provider rate-limited this request. This is your provider’s quota/rate limit — not a limit imposed by this app. Wait a moment and try again.'; else if(m.startsWith('PROVIDER_TEMPORARY:')) friendly='⏳ The provider is temporarily overloaded. Your key reached the provider; try again in a moment.'; else if(m.startsWith('AUTH_FAILED:')) friendly='🔑 The provider rejected the key. Check the key, account access, and selected model.'; else if(m.startsWith('REQUEST_REJECTED:')) friendly='⚠ The provider rejected the request. Check the selected model and endpoint.'; addMsg('ai',friendly);}
   busy=false;
 }
 function openAI(){
@@ -549,8 +563,10 @@ function openAI(){
   const b=$('aiBtn');if(b)b.classList.remove('btn-new');
   $('aiOverlay').classList.add('open');paintStatus();
   tab(cfg.key?'coach':'connect');
-  if($('aiLog').children.length===0){
-    addMsg('ai',cfg.key
+  const log=$('aiLog');
+  if(log && log.children.length===0){
+    if(history.length){ history.forEach(m=>addMsg(m.role==='user'?'me':'ai',m.content)); }
+    else addMsg('ai',cfg.key
       ?`Hi — I’m ${name()}. I can read the live planner and propose changes to pace, deadline, chapter order, skips, section counts and schedules.`
       :`Hi — I’m ${name()}. I’m not connected yet. Open CONNECT & GUIDE and I’ll walk you through the API setup step by step.`);
   }

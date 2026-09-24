@@ -134,3 +134,40 @@
 
 @media(max-width:900px){.ai-command-deck{align-items:flex-start;flex-direction:column}.acd-actions{width:100%;justify-content:flex-start}.acd-btn{flex:1}.connection-grid{grid-template-columns:1fr!important}}
 @media(max-width:600px){.ai-command-deck{padding:14px}.acd-left{align-items:flex-start}.acd-actions{display:grid;grid-template-columns:1fr 1fr}.acd-btn.primary{grid-column:1/-1}.cap-grid{grid-template-columns:1fr!important}}
+
+/* ==========================================================
+   V5.3 — AI STABILITY / SCROLL / PERSISTENCE PASS
+   ========================================================== */
+html{scroll-behavior:auto!important}
+body{overflow-x:hidden!important;overflow-y:auto!important;overscroll-behavior-y:auto!important}
+.log-overlay{overflow-x:hidden!important;overflow-y:auto!important;-webkit-overflow-scrolling:touch!important;overscroll-behavior:contain!important;align-items:flex-start!important}
+.ai-modal{width:min(1040px,calc(100vw - 24px))!important;max-height:calc(100dvh - 24px)!important;display:flex!important;flex-direction:column!important;overflow:hidden!important;margin:12px auto!important}
+.ai-modal .log-modal-head{flex:0 0 auto!important;position:sticky!important;top:0!important;z-index:20!important}
+#aiCoach,#aiConnect,#aiAbout{min-height:0!important;overflow:visible!important}
+#aiCoach{display:flex;flex-direction:column;min-height:0!important}
+.ai-statusbar,.ai-chat-tools,.ai-chips,.ai-input{flex:0 0 auto!important}
+.ai-log{height:auto!important;min-height:180px!important;max-height:min(48vh,520px)!important;overflow-y:auto!important;overflow-x:hidden!important;-webkit-overflow-scrolling:touch!important;overscroll-behavior:contain!important;padding-right:8px!important;scrollbar-gutter:stable!important}
+.ai-prop{max-height:30vh;overflow:auto;-webkit-overflow-scrolling:touch}
+#aiConnect,#aiAbout{max-height:calc(100dvh - 115px);overflow-y:auto!important;-webkit-overflow-scrolling:touch!important;padding-right:4px}
+.connection-grid{align-items:start!important}
+.beginner-guide,.connection-main,.advanced-connection{min-width:0}
+.ai-chat-tools{display:flex;align-items:center;gap:7px;margin:0 0 8px;padding:7px 9px;border:1px solid rgba(255,255,255,.06);border-radius:9px;background:#070809;color:#666b74;font-size:8px;letter-spacing:1.1px}
+.ai-chat-tools span{margin-right:auto}
+.ai-chat-tools .btn{height:27px;padding:0 9px;font-size:8px}
+.ai-msg{overflow-wrap:anywhere;word-break:break-word}
+.ai-input{position:sticky;bottom:0;background:linear-gradient(180deg,transparent,#050607 18%);padding:14px 0 2px!important;z-index:10}
+.ai-input textarea{max-height:150px;overflow-y:auto!important;-webkit-overflow-scrolling:touch}
+.ai-modal *{scrollbar-width:thin;scrollbar-color:#30333a transparent}
+@media(max-width:700px){
+ .ai-modal{width:100%!important;max-height:100dvh!important;margin:0!important;border-radius:0!important}
+ #aiConnect,#aiAbout{max-height:calc(100dvh - 90px)}
+ .ai-log{max-height:42dvh!important;min-height:160px!important}
+ .ai-chat-tools span{font-size:7px}
+ .ai-chat-tools .btn{flex:0 0 auto}
+}
+/* Keep the new black/graphite system consistent with legacy theme layers. */
+.ai-modal,.connection-main,.beginner-guide,.advanced-connection,.cap-card{background:#050607!important;border-color:#1c1e22!important}
+.ai-modal{box-shadow:0 30px 100px rgba(0,0,0,.8),inset 0 1px rgba(255,255,255,.025)!important}
+.ai-chip,.ai-chat-tools,.ai-statusbar{background:#08090b!important;border-color:#1b1d21!important}
+.ai-chip:hover{border-color:#555b64!important;background:#0d0f12!important}
+.ai-btn,.acd-btn{box-shadow:none!important}

@@ -1461,6 +1461,43 @@ header{background:rgba(4,5,6,.94) !important}
 @media(max-width:900px){.ai-command-deck{align-items:flex-start;flex-direction:column}.acd-actions{width:100%;justify-content:flex-start}.acd-btn{flex:1}.connection-grid{grid-template-columns:1fr!important}}
 @media(max-width:600px){.ai-command-deck{padding:14px}.acd-left{align-items:flex-start}.acd-actions{display:grid;grid-template-columns:1fr 1fr}.acd-btn.primary{grid-column:1/-1}.cap-grid{grid-template-columns:1fr!important}}
 
+/* ==========================================================
+   V5.3 — AI STABILITY / SCROLL / PERSISTENCE PASS
+   ========================================================== */
+html{scroll-behavior:auto!important}
+body{overflow-x:hidden!important;overflow-y:auto!important;overscroll-behavior-y:auto!important}
+.log-overlay{overflow-x:hidden!important;overflow-y:auto!important;-webkit-overflow-scrolling:touch!important;overscroll-behavior:contain!important;align-items:flex-start!important}
+.ai-modal{width:min(1040px,calc(100vw - 24px))!important;max-height:calc(100dvh - 24px)!important;display:flex!important;flex-direction:column!important;overflow:hidden!important;margin:12px auto!important}
+.ai-modal .log-modal-head{flex:0 0 auto!important;position:sticky!important;top:0!important;z-index:20!important}
+#aiCoach,#aiConnect,#aiAbout{min-height:0!important;overflow:visible!important}
+#aiCoach{display:flex;flex-direction:column;min-height:0!important}
+.ai-statusbar,.ai-chat-tools,.ai-chips,.ai-input{flex:0 0 auto!important}
+.ai-log{height:auto!important;min-height:180px!important;max-height:min(48vh,520px)!important;overflow-y:auto!important;overflow-x:hidden!important;-webkit-overflow-scrolling:touch!important;overscroll-behavior:contain!important;padding-right:8px!important;scrollbar-gutter:stable!important}
+.ai-prop{max-height:30vh;overflow:auto;-webkit-overflow-scrolling:touch}
+#aiConnect,#aiAbout{max-height:calc(100dvh - 115px);overflow-y:auto!important;-webkit-overflow-scrolling:touch!important;padding-right:4px}
+.connection-grid{align-items:start!important}
+.beginner-guide,.connection-main,.advanced-connection{min-width:0}
+.ai-chat-tools{display:flex;align-items:center;gap:7px;margin:0 0 8px;padding:7px 9px;border:1px solid rgba(255,255,255,.06);border-radius:9px;background:#070809;color:#666b74;font-size:8px;letter-spacing:1.1px}
+.ai-chat-tools span{margin-right:auto}
+.ai-chat-tools .btn{height:27px;padding:0 9px;font-size:8px}
+.ai-msg{overflow-wrap:anywhere;word-break:break-word}
+.ai-input{position:sticky;bottom:0;background:linear-gradient(180deg,transparent,#050607 18%);padding:14px 0 2px!important;z-index:10}
+.ai-input textarea{max-height:150px;overflow-y:auto!important;-webkit-overflow-scrolling:touch}
+.ai-modal *{scrollbar-width:thin;scrollbar-color:#30333a transparent}
+@media(max-width:700px){
+ .ai-modal{width:100%!important;max-height:100dvh!important;margin:0!important;border-radius:0!important}
+ #aiConnect,#aiAbout{max-height:calc(100dvh - 90px)}
+ .ai-log{max-height:42dvh!important;min-height:160px!important}
+ .ai-chat-tools span{font-size:7px}
+ .ai-chat-tools .btn{flex:0 0 auto}
+}
+/* Keep the new black/graphite system consistent with legacy theme layers. */
+.ai-modal,.connection-main,.beginner-guide,.advanced-connection,.cap-card{background:#050607!important;border-color:#1c1e22!important}
+.ai-modal{box-shadow:0 30px 100px rgba(0,0,0,.8),inset 0 1px rgba(255,255,255,.025)!important}
+.ai-chip,.ai-chat-tools,.ai-statusbar{background:#08090b!important;border-color:#1b1d21!important}
+.ai-chip:hover{border-color:#555b64!important;background:#0d0f12!important}
+.ai-btn,.acd-btn{box-shadow:none!important}
+
 </style>
 <style>
 /* ═══ UI v3 · clean flip ═══ loaded LAST. Tokens first, then header, layout, components, overlays. */
@@ -5535,7 +5572,7 @@ if(document.getElementById('reorderPanel').classList.contains('open')) renderReo
 (function(){
 'use strict';
 
-const CFG_KEY='nkMDCCCVII_cfg_v5', SEEN_KEY='nkMDCCCVII_seen_v5';
+const CFG_KEY='nkMDCCCVII_cfg_v5', HISTORY_KEY='nkMDCCCVII_history_v5', SEEN_KEY='nkMDCCCVII_seen_v5';
 const store={
   get:k=>{try{return localStorage.getItem(k);}catch(e){return null;}},
   set:(k,v)=>{try{localStorage.setItem(k,v);}catch(e){}},
@@ -5587,7 +5624,11 @@ const defaults={provider:'gemini',model:'',key:'',url:'',name:'MDCCCVII',autoApp
 function loadCfg(){
   try{return Object.assign({},defaults,JSON.parse(store.get(CFG_KEY)||'{}'));}catch(e){return Object.assign({},defaults);}
 }
-let cfg=loadCfg(), history=[], proposal=null, busy=false;
+let cfg=loadCfg(), history=loadHistory(), proposal=null, busy=false;
+function loadHistory(){ try{ const x=JSON.parse(store.get(HISTORY_KEY)||'[]'); return Array.isArray(x)?x.filter(m=>m&&['user','assistant'].includes(m.role)&&typeof m.content==='string').slice(-80):[]; }catch(e){ return []; }}
+function persistHistory(){ store.set(HISTORY_KEY, JSON.stringify(history.slice(-80))); }
+function clearHistory(){ history=[]; persistHistory(); const l=$('aiLog'); if(l) l.innerHTML=''; addMsg('ai',`Chat cleared. I’m ${name()} and I’m ready for the next task.`); }
+function exportHistory(){ const blob=new Blob([JSON.stringify({assistant:name(),exported:new Date().toISOString(),messages:history},null,2)],{type:'application/json'}); const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='mdcccvii-chat.json'; a.click(); setTimeout(()=>URL.revokeObjectURL(a.href),500); }
 
 const $=id=>document.getElementById(id);
 const esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
@@ -5654,11 +5695,12 @@ async function callAI(msgs,sys){
     }
     data=await res.json().catch(()=>({}));
     if(!res.ok){
-      const m=(data.error&&(data.error.message||data.error))||res.statusText;
-      if(res.status===429) throw new Error('Rate limit reached. Wait a little, reduce requests, or switch provider/model.');
-      if(res.status===400) throw new Error('The provider received your key, but rejected the request. Check the selected model and request format. '+m);
-      if(res.status===401||res.status===403) throw new Error('The key reached the provider but was rejected. Check that you copied the API key (not a project ID), that the model is available to your account, and that billing/free-tier access is enabled. '+m);
-      throw new Error('API error '+res.status+': '+m);
+      const m=(data.error&&(data.error.message||data.error))||res.statusText||'Unknown provider error';
+      if(res.status===429) throw new Error('PROVIDER_RATE_LIMIT: '+m);
+      if(res.status===503) throw new Error('PROVIDER_TEMPORARY: '+m);
+      if(res.status===400) throw new Error('REQUEST_REJECTED: '+m);
+      if(res.status===401||res.status===403) throw new Error('AUTH_FAILED: '+m);
+      throw new Error('API_ERROR_'+res.status+': '+m);
     }
     text=cfg.provider==='gemini'
       ?((data.candidates?.[0]?.content?.parts||[]).map(x=>x.text||'').join(''))
@@ -5791,6 +5833,7 @@ function build(){
 
    <div id="aiCoach">
      <div class="ai-statusbar"><span id="aiStatusDot"></span><span id="aiStatusText">Not connected</span><button class="btn sm" id="aiQuickConnect">SET UP AI</button></div>
+     <div class="ai-chat-tools"><span>LOCAL CHAT HISTORY · NO APP MESSAGE CAP</span><button class="btn sm" id="aiExportChat">EXPORT CHAT</button><button class="btn sm danger" id="aiClearChat">CLEAR CHAT</button></div>
      <div class="ai-chips">
        <button class="ai-chip" data-q="Look at my entire planner and tell me what I should change first.">🧭 Audit planner</button>
        <button class="ai-chip" data-q="Make a realistic day-wise plan from today using my current backlog.">🗓 Build plan</button>
@@ -5870,6 +5913,8 @@ function build(){
   o.querySelectorAll('.ai-tab').forEach(b=>b.onclick=()=>tab(b.dataset.t));
   o.querySelectorAll('.ai-chip').forEach(b=>b.onclick=()=>send(b.dataset.q));
   $('aiSend').onclick=()=>send($('aiText').value);
+  $('aiClearChat').onclick=()=>{if(confirm('Clear this AI conversation?')) clearHistory();};
+  $('aiExportChat').onclick=exportHistory;
   $('aiText').addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();send($('aiText').value);}});
   $('aiQuickConnect').onclick=()=>{tab('connect');};
 
@@ -6062,13 +6107,19 @@ async function send(text){
   busy=true;$('aiText').value='';proposal=null;showProposal();addMsg('me',text);
   const wait=addMsg('ai',name()+' is thinking…');wait.classList.add('wait');
   try{
-    const msgs=[...history.slice(-8),{role:'user',content:'LIVE PLANNER DATA:\n'+JSON.stringify(snapshot())+'\n\nSTUDENT REQUEST: '+text}];
-    const r=parseReply(await callAI(msgs,SYS()));
+    const msgs=[...history.slice(-12),{role:'user',content:'LIVE PLANNER DATA:\n'+JSON.stringify(snapshot())+'\n\nSTUDENT REQUEST: '+text}];
+    let raw, lastErr;
+    for(let attempt=0;attempt<3;attempt++){
+      try{ raw=await callAI(msgs,SYS()); break; }
+      catch(e){ lastErr=e; const m=String(e.message||''); if(!m.startsWith('PROVIDER_TEMPORARY:') || attempt===2) throw e; wait.textContent=name()+' is retrying… ('+(attempt+1)+'/2)'; await new Promise(r=>setTimeout(r,1000*Math.pow(2,attempt))); }
+    }
+    const r=parseReply(raw);
     history.push({role:'user',content:text},{role:'assistant',content:String(r.reply||'')});
+    persistHistory();
     wait.remove();addMsg('ai',String(r.reply||'…'));
     proposal={actions:validActions(r.actions),why:String(r.why||'')};
     showProposal();
-  }catch(e){wait.remove();addMsg('ai','⚠ '+e.message);}
+  }catch(e){wait.remove(); const m=String(e.message||e); let friendly=m; if(m.startsWith('PROVIDER_RATE_LIMIT:')) friendly='⏳ The provider rate-limited this request. This is your provider’s quota/rate limit — not a limit imposed by this app. Wait a moment and try again.'; else if(m.startsWith('PROVIDER_TEMPORARY:')) friendly='⏳ The provider is temporarily overloaded. Your key reached the provider; try again in a moment.'; else if(m.startsWith('AUTH_FAILED:')) friendly='🔑 The provider rejected the key. Check the key, account access, and selected model.'; else if(m.startsWith('REQUEST_REJECTED:')) friendly='⚠ The provider rejected the request. Check the selected model and endpoint.'; addMsg('ai',friendly);}
   busy=false;
 }
 function openAI(){
@@ -6076,8 +6127,10 @@ function openAI(){
   const b=$('aiBtn');if(b)b.classList.remove('btn-new');
   $('aiOverlay').classList.add('open');paintStatus();
   tab(cfg.key?'coach':'connect');
-  if($('aiLog').children.length===0){
-    addMsg('ai',cfg.key
+  const log=$('aiLog');
+  if(log && log.children.length===0){
+    if(history.length){ history.forEach(m=>addMsg(m.role==='user'?'me':'ai',m.content)); }
+    else addMsg('ai',cfg.key
       ?`Hi — I’m ${name()}. I can read the live planner and propose changes to pace, deadline, chapter order, skips, section counts and schedules.`
       :`Hi — I’m ${name()}. I’m not connected yet. Open CONNECT & GUIDE and I’ll walk you through the API setup step by step.`);
   }
