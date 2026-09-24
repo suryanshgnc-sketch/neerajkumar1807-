@@ -1159,6 +1159,86 @@ footer .credit b{background:linear-gradient(90deg,var(--accent-a),var(--accent-b
 @media (prefers-reduced-motion:reduce){*{animation-duration:.01ms !important;transition-duration:.01ms !important;}}
 @media (max-width:640px){.ver-row{display:none;}header{padding:8px 12px;}}
 
+
+/* ==========================================================
+   BLACK MATTER // OBSIDIAN REFORMATION v2.1
+   Pure black workspace, quieter chrome, stronger hierarchy.
+   ========================================================== */
+:root{
+  --bg:#000;
+  --bg2:#030303;
+  --panel:#050505;
+  --grid:#0b0b0b;
+  --text:#e8e8e8;
+  --text-dim:#707070;
+  --border:#171717;
+  --line:rgba(255,255,255,.09);
+  --accent-a:#f2f2f2;
+  --accent-b:#777;
+  --green:#f1f1f1;
+  --green-dim:#363636;
+  --green-glow:rgba(255,255,255,.16);
+  --purple:#b7b7b7;
+  --amber:#d5d5d5;
+}
+html,body{background:#000!important;color:var(--text)!important;}
+body{background-image:radial-gradient(circle at 50% -15%,rgba(255,255,255,.035),transparent 42%)!important;}
+#auroraField,#holoFloor,#hSweep,#cursorGlow{display:none!important;}
+header{background:#000!important;border-bottom:1px solid #111!important;box-shadow:0 14px 50px rgba(0,0,0,.9)!important;}
+header::after{background:linear-gradient(90deg,transparent,#444,#111,transparent)!important;opacity:.8;}
+.brand h1,.log-modal-head h2{background:linear-gradient(90deg,#fff,#777)!important;-webkit-background-clip:text!important;background-clip:text!important;-webkit-text-fill-color:transparent!important;}
+.ver-chip{background:#fff!important;color:#000!important;}
+.ver-new{color:#aaa!important;}
+.btn{background:#050505!important;border-color:#1c1c1c!important;color:#cfcfcf!important;box-shadow:none!important;}
+.btn:hover{background:#101010!important;border-color:#555!important;box-shadow:0 8px 24px rgba(0,0,0,.7)!important;}
+.btn.danger:hover{background:#170909!important;border-color:#7a3030!important;}
+.card,.mission-card,.chapter-card,.section-block,.ch-header{background:#050505!important;border-color:#151515!important;box-shadow:0 8px 28px rgba(0,0,0,.55)!important;}
+.card:hover,.mission-card:hover,.chapter-card:hover{border-color:#292929!important;box-shadow:0 16px 44px rgba(0,0,0,.75)!important;}
+.ch-item{background:#020202!important;border-color:transparent!important;}
+.ch-item:hover{background:#090909!important;border-color:#1e1e1e!important;}
+.ch-item.active{background:#0b0b0b!important;border-color:#303030!important;box-shadow:inset 2px 0 #fff,0 8px 20px rgba(0,0,0,.55);}
+.ch-item.done .ci-name,.ch-header-left h2,.drow b{color:#fff!important;text-shadow:none!important;}
+.qbox{background:#020202!important;border-color:#151515!important;color:#777!important;border-radius:7px!important;}
+.qbox:hover{background:#0d0d0d!important;border-color:#4a4a4a!important;box-shadow:0 10px 28px rgba(0,0,0,.8)!important;}
+.qbox.good{box-shadow:0 0 0 1px #888!important;border-color:#777!important;}
+.qbox.done{background:#222!important;color:#aaa!important;border-color:#555!important;}
+.s-pending{font-weight:800;color:#fff;letter-spacing:.8px;}
+.queue-empty{padding:18px 10px;border:1px dashed #222;border-radius:9px;color:#666;font-size:11px;text-align:center;background:#020202;}
+.queue-clear{display:flex;flex-direction:column;align-items:center;gap:4px;color:#aaa;}
+.queue-clear span{font-size:20px;color:#fff;}
+.queue-clear b{font-size:10px;letter-spacing:1.5px;color:#eee;}
+.queue-clear small{font-size:9px;color:#555;}
+.bm-item{background:#050505!important;border-color:#181818!important;transition:.2s ease!important;}
+.bm-item:hover{transform:translateX(4px);border-color:#444!important;background:#0a0a0a!important;}
+.bm-item .restore{background:#0b0b0b!important;border-color:#262626!important;color:#ddd!important;}
+.bm-item .restore:hover{border-color:#777!important;background:#151515!important;}
+.bm-filter.active{background:#fff!important;color:#000!important;border-color:#fff!important;}
+.bm-modal{background:#030303!important;border-color:#202020!important;box-shadow:0 35px 100px rgba(0,0,0,.9)!important;}
+.bm-overlay,.log-overlay{background:rgba(0,0,0,.9)!important;backdrop-filter:blur(10px)!important;}
+.bm-kicker{color:#777!important;}
+.xp-bar-outer{background:#0a0a0a!important;border-color:#1b1b1b!important;}
+.xp-bar-fill{background:linear-gradient(90deg,#555,#fff)!important;box-shadow:0 0 14px rgba(255,255,255,.16)!important;}
+.mission-card.complete{border-color:#555!important;box-shadow:0 0 20px rgba(255,255,255,.06)!important;}
+.mission-card .mc-fill,.mission-card.complete .mc-fill{background:#ddd!important;}
+footer{background:#000!important;border-color:#111!important;color:#444!important;}
+
+/* completed question leaves the workspace as a physical object */
+.qbox.bm-pop{animation:queueConquer .36s cubic-bezier(.16,1,.3,1) both!important;}
+.qbox.bm-flight{position:fixed!important;z-index:5000!important;pointer-events:none!important;margin:0!important;background:#fff!important;color:#000!important;border-color:#fff!important;box-shadow:0 0 30px rgba(255,255,255,.45)!important;animation:flyToConquered .58s cubic-bezier(.16,1,.3,1) forwards!important;}
+@keyframes queueConquer{0%{transform:scale(1);opacity:1}35%{transform:scale(1.25);opacity:1}100%{transform:scale(.25);opacity:0;filter:blur(2px)}}
+@keyframes flyToConquered{0%{opacity:1;transform:translate3d(0,0,0) scale(1)}35%{opacity:1;transform:translate3d(calc(var(--tx)*.35),calc(var(--ty)*.35),0) scale(1.18) rotate(-4deg)}100%{opacity:0;transform:translate3d(var(--tx),var(--ty),0) scale(.22) rotate(6deg)}}
+.bm-nav-btn #conqueredCount,.bm-nav-btn span{transition:transform .2s ease,background .2s ease;}
+.bm-nav-btn.bm-arrival{animation:conquerPulse .55s ease!important;}
+@keyframes conquerPulse{0%{transform:scale(1)}35%{transform:scale(1.08);background:#fff!important;color:#000!important;box-shadow:0 0 28px rgba(255,255,255,.25)}100%{transform:scale(1)}}
+
+/* Make the navigation a fixed command rail on desktop. */
+@media(min-width:901px){
+  header{position:sticky!important;top:0!important;z-index:1200!important;}
+  .layout{align-items:flex-start!important;}
+  nav.chlist{position:sticky!important;top:104px!important;height:calc(100vh - 120px)!important;overflow:auto!important;background:#000!important;}
+  main{padding:20px 24px 50px!important;}
+}
+
 </style>
 <style>
 /* ==========================================================
@@ -2608,6 +2688,8 @@ function renderMain(){
   ch.sections.forEach(s=>{
     const count=effCount(ch.id,s.key);
     const arr=state.ticks[ch.id][s.key];
+    // The active workspace is intentionally a pure TODO queue: conquered questions never render here.
+    const pendingCount=arr.reduce((n,v)=>n+(v?0:1),0);
     const sdone=arr.filter(Boolean).length;
     const skipped=isSkipped(ch.id,s.key);
     const mult=effortFor(s.key);
@@ -2618,8 +2700,8 @@ function renderMain(){
         <div class="s-left">
           <span class="s-name">${s.label}${skipped?'<span class="badge-skip" style="margin-left:8px;">SKIPPED</span>':''}</span>
           <div class="s-meta">
-            <span>${fmtNum(sdone*mult)} / ${fmtNum(count*mult)} pts</span>
-            <span style="opacity:0.55;">(${sdone}/${count} Q · ×${fmtNum(mult)})</span>
+            <span class="s-pending">${pendingCount} LEFT</span>
+            <span style="opacity:0.55;">${sdone}/${count} conquered · ×${fmtNum(mult)}</span>
             <button class="btn sm" data-ch="${ch.id}" data-sec="${s.key}" title="Edit question count"
               style="border-color:var(--text-dim);color:var(--text-dim);" onclick="editCount(this)">✎ EDIT</button>
           </div>
@@ -2631,43 +2713,48 @@ function renderMain(){
         </div>
       </div>
       <div class="qgrid" data-ch="${ch.id}" data-sec="${s.key}" style="${skipped||count===0?'display:none;':''}"></div>
-      ${count===0&&!skipped?'<div style="font-size:10px;color:var(--text-dim);">No questions yet — hit EDIT above.</div>':''}
+      ${count===0&&!skipped?'<div class="queue-empty">No questions yet — hit EDIT above.</div>':(!skipped&&pendingCount===0?'<div class="queue-empty queue-clear"><span>✓</span><b>SECTION CONQUERED</b><small>Everything here is done. Keep moving.</small></div>':'')}
     `;
     const grid=block.querySelector('.qgrid');
     const goodArr=(state.good[ch.id]&&state.good[ch.id][s.key])||[];
     for(let i=0;i<count;i++){
+      if(arr[i]) continue;
       const box=document.createElement('div');
       box.className='qbox'+(arr[i]?' done':'')+(goodArr[i]?' good':'');
       box.title=goodArr[i]?'★ Marked GOOD — right-click to unmark':'Right-click to mark as GOOD';
       box.textContent=i+1;
       box.onclick=()=>{
         const k=logKey(ch.id,s.key,i);
+        const wasDone=!!arr[i];
         arr[i]=!arr[i];
         playSound('tick');
         if(arr[i]){
-          // Black Matter completion burst: brief shrink/pop before the grid re-renders.
+          // Completed questions leave the active queue permanently and fly into Conquered.
           box.classList.remove('bm-pop');
-          void box.offsetWidth;
-          box.classList.add('bm-pop');
-          // checked: award and remember exactly how much XP this question paid out
+          void box.offsetWidth; box.classList.add('bm-pop');
           const amt=xpForQuestion(s.key);
           state.qXP[k]=amt;
           state.log[k]=todayStr();
           registerActivity(1);
           awardXP(amt);
+          bmMarkComplete(ch.id,s.key,i);
+          bmFlyToConquered(box);
         } else {
-          // unchecked (incl. mistaken clicks): undo the exact XP it earned
+          // Restore a conquered question back into the active queue.
           const amt=(state.qXP&&state.qXP[k])||xpForQuestion(s.key);
           delete state.qXP[k];
           delete state.log[k];
           registerActivity(-1);
           awardXP(-amt);
+          bmSetConquered(ch.id,s.key,i,false);
         }
         checkAchievements();
         checkMissionXP();
         autoUpdateTaskCompletion();
         saveState();
-        renderAll();
+        // Give the transfer animation time to finish before the active queue reflows.
+        if(!wasDone && arr[i]) setTimeout(()=>renderAll(), 360);
+        else renderAll();
       };
       box.oncontextmenu=(e)=>{
         e.preventDefault();
@@ -4606,6 +4693,26 @@ autoUpdateTaskCompletion();
     state.conquered[bmQKey(chId,secKey,i)] = !!val;
   }
   function bmIsConquered(chId,secKey,i){ return !!state.conquered[bmQKey(chId,secKey,i)]; }
+  function bmMarkComplete(chId,secKey,i){
+    bmSetConquered(chId,secKey,i,true);
+  }
+
+  function bmFlyToConquered(box){
+    const target=document.getElementById('conqueredCount')?.closest('.bm-nav-btn') || document.getElementById('conqueredCount');
+    if(!box || !target) return;
+    const a=box.getBoundingClientRect(), b=target.getBoundingClientRect();
+    const ghost=box.cloneNode(true);
+    ghost.className='qbox bm-flight';
+    ghost.textContent=box.textContent;
+    ghost.style.left=a.left+'px'; ghost.style.top=a.top+'px';
+    ghost.style.width=a.width+'px'; ghost.style.height=a.height+'px';
+    ghost.style.setProperty('--tx',(b.left+b.width/2-a.left-a.width/2)+'px');
+    ghost.style.setProperty('--ty',(b.top+b.height/2-a.top-a.height/2)+'px');
+    document.body.appendChild(ghost);
+    target.classList.remove('bm-arrival'); void target.offsetWidth; target.classList.add('bm-arrival');
+    setTimeout(()=>ghost.remove(),620);
+  }
+
 
   function bmConqueredItems(){
     const items=[];
@@ -4643,7 +4750,7 @@ autoUpdateTaskCompletion();
       <div class="bm-item">
         <div class="num${x.important?' gold':''}">${x.i+1}</div>
         <div class="meta"><div class="title">${x.chName} · ${x.secName}</div><div class="sub">${x.important?'★ IMPORTANT · ':''}${x.today?'CONQUERED TODAY':''}</div></div>
-        <button class="restore" data-restore="${bmQKey(x.chId,x.secKey,x.i)}">RESTORE</button>
+        <button class="restore" data-restore="${bmQKey(x.chId,x.secKey,x.i)}">↩ RESTORE</button>
       </div>`).join('')+'</div>';
     body.querySelectorAll('[data-restore]').forEach(b=>b.onclick=()=>{
       const [chId,secKey,idxStr]=b.dataset.restore.split('|'); const i=+idxStr;
@@ -4685,9 +4792,9 @@ autoUpdateTaskCompletion();
     if(c) c.textContent=bmConqueredItems().length;
     if(im) im.textContent=bmImportantItems().length;
     const p=document.getElementById('pendingToggleBtn');
-    if(p) p.textContent=BM.onlyLeft?'SHOW ALL':'ONLY LEFT';
+    if(p) p.textContent=BM.onlyLeft?'SHOW ALL':'PENDING ONLY';
     const pm=document.getElementById('bmPendingMobile');
-    if(pm) pm.textContent=BM.onlyLeft?'SHOW ALL':'ONLY LEFT';
+    if(pm) pm.textContent=BM.onlyLeft?'SHOW ALL':'PENDING ONLY';
   }
 
   function bmSetOnlyLeft(v){

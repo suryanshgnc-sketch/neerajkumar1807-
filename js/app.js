@@ -867,6 +867,8 @@ function renderMain(){
   ch.sections.forEach(s=>{
     const count=effCount(ch.id,s.key);
     const arr=state.ticks[ch.id][s.key];
+    // The active workspace is intentionally a pure TODO queue: conquered questions never render here.
+    const pendingCount=arr.reduce((n,v)=>n+(v?0:1),0);
     const sdone=arr.filter(Boolean).length;
     const skipped=isSkipped(ch.id,s.key);
     const mult=effortFor(s.key);
@@ -877,8 +879,8 @@ function renderMain(){
         <div class="s-left">
           <span class="s-name">${s.label}${skipped?'<span class="badge-skip" style="margin-left:8px;">SKIPPED</span>':''}</span>
           <div class="s-meta">
-            <span>${fmtNum(sdone*mult)} / ${fmtNum(count*mult)} pts</span>
-            <span style="opacity:0.55;">(${sdone}/${count} Q · ×${fmtNum(mult)})</span>
+            <span class="s-pending">${pendingCount} LEFT</span>
+            <span style="opacity:0.55;">${sdone}/${count} conquered · ×${fmtNum(mult)}</span>
             <button class="btn sm" data-ch="${ch.id}" data-sec="${s.key}" title="Edit question count"
               style="border-color:var(--text-dim);color:var(--text-dim);" onclick="editCount(this)">✎ EDIT</button>
           </div>
@@ -890,43 +892,48 @@ function renderMain(){
         </div>
       </div>
       <div class="qgrid" data-ch="${ch.id}" data-sec="${s.key}" style="${skipped||count===0?'display:none;':''}"></div>
-      ${count===0&&!skipped?'<div style="font-size:10px;color:var(--text-dim);">No questions yet — hit EDIT above.</div>':''}
+      ${count===0&&!skipped?'<div class="queue-empty">No questions yet — hit EDIT above.</div>':(!skipped&&pendingCount===0?'<div class="queue-empty queue-clear"><span>✓</span><b>SECTION CONQUERED</b><small>Everything here is done. Keep moving.</small></div>':'')}
     `;
     const grid=block.querySelector('.qgrid');
     const goodArr=(state.good[ch.id]&&state.good[ch.id][s.key])||[];
     for(let i=0;i<count;i++){
+      if(arr[i]) continue;
       const box=document.createElement('div');
       box.className='qbox'+(arr[i]?' done':'')+(goodArr[i]?' good':'');
       box.title=goodArr[i]?'★ Marked GOOD — right-click to unmark':'Right-click to mark as GOOD';
       box.textContent=i+1;
       box.onclick=()=>{
         const k=logKey(ch.id,s.key,i);
+        const wasDone=!!arr[i];
         arr[i]=!arr[i];
         playSound('tick');
         if(arr[i]){
-          // Black Matter completion burst: brief shrink/pop before the grid re-renders.
+          // Completed questions leave the active queue permanently and fly into Conquered.
           box.classList.remove('bm-pop');
-          void box.offsetWidth;
-          box.classList.add('bm-pop');
-          // checked: award and remember exactly how much XP this question paid out
+          void box.offsetWidth; box.classList.add('bm-pop');
           const amt=xpForQuestion(s.key);
           state.qXP[k]=amt;
           state.log[k]=todayStr();
           registerActivity(1);
           awardXP(amt);
+          bmMarkComplete(ch.id,s.key,i);
+          bmFlyToConquered(box);
         } else {
-          // unchecked (incl. mistaken clicks): undo the exact XP it earned
+          // Restore a conquered question back into the active queue.
           const amt=(state.qXP&&state.qXP[k])||xpForQuestion(s.key);
           delete state.qXP[k];
           delete state.log[k];
           registerActivity(-1);
           awardXP(-amt);
+          bmSetConquered(ch.id,s.key,i,false);
         }
         checkAchievements();
         checkMissionXP();
         autoUpdateTaskCompletion();
         saveState();
-        renderAll();
+        // Give the transfer animation time to finish before the active queue reflows.
+        if(!wasDone && arr[i]) setTimeout(()=>renderAll(), 360);
+        else renderAll();
       };
       box.oncontextmenu=(e)=>{
         e.preventDefault();
@@ -2865,6 +2872,26 @@ autoUpdateTaskCompletion();
     state.conquered[bmQKey(chId,secKey,i)] = !!val;
   }
   function bmIsConquered(chId,secKey,i){ return !!state.conquered[bmQKey(chId,secKey,i)]; }
+  function bmMarkComplete(chId,secKey,i){
+    bmSetConquered(chId,secKey,i,true);
+  }
+
+  function bmFlyToConquered(box){
+    const target=document.getElementById('conqueredCount')?.closest('.bm-nav-btn') || document.getElementById('conqueredCount');
+    if(!box || !target) return;
+    const a=box.getBoundingClientRect(), b=target.getBoundingClientRect();
+    const ghost=box.cloneNode(true);
+    ghost.className='qbox bm-flight';
+    ghost.textContent=box.textContent;
+    ghost.style.left=a.left+'px'; ghost.style.top=a.top+'px';
+    ghost.style.width=a.width+'px'; ghost.style.height=a.height+'px';
+    ghost.style.setProperty('--tx',(b.left+b.width/2-a.left-a.width/2)+'px');
+    ghost.style.setProperty('--ty',(b.top+b.height/2-a.top-a.height/2)+'px');
+    document.body.appendChild(ghost);
+    target.classList.remove('bm-arrival'); void target.offsetWidth; target.classList.add('bm-arrival');
+    setTimeout(()=>ghost.remove(),620);
+  }
+
 
   function bmConqueredItems(){
     const items=[];
@@ -2902,7 +2929,7 @@ autoUpdateTaskCompletion();
       <div class="bm-item">
         <div class="num${x.important?' gold':''}">${x.i+1}</div>
         <div class="meta"><div class="title">${x.chName} · ${x.secName}</div><div class="sub">${x.important?'★ IMPORTANT · ':''}${x.today?'CONQUERED TODAY':''}</div></div>
-        <button class="restore" data-restore="${bmQKey(x.chId,x.secKey,x.i)}">RESTORE</button>
+        <button class="restore" data-restore="${bmQKey(x.chId,x.secKey,x.i)}">↩ RESTORE</button>
       </div>`).join('')+'</div>';
     body.querySelectorAll('[data-restore]').forEach(b=>b.onclick=()=>{
       const [chId,secKey,idxStr]=b.dataset.restore.split('|'); const i=+idxStr;
@@ -2944,9 +2971,9 @@ autoUpdateTaskCompletion();
     if(c) c.textContent=bmConqueredItems().length;
     if(im) im.textContent=bmImportantItems().length;
     const p=document.getElementById('pendingToggleBtn');
-    if(p) p.textContent=BM.onlyLeft?'SHOW ALL':'ONLY LEFT';
+    if(p) p.textContent=BM.onlyLeft?'SHOW ALL':'PENDING ONLY';
     const pm=document.getElementById('bmPendingMobile');
-    if(pm) pm.textContent=BM.onlyLeft?'SHOW ALL':'ONLY LEFT';
+    if(pm) pm.textContent=BM.onlyLeft?'SHOW ALL':'PENDING ONLY';
   }
 
   function bmSetOnlyLeft(v){
