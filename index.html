@@ -9,6 +9,7 @@
 <link rel="stylesheet" href="css/styles.css">
 <link rel="stylesheet" href="css/enhancements.css">
 <link rel="stylesheet" href="css/cloud.css">
+<link rel="stylesheet" href="css/ui3.css">
 </head>
 <body>
 <div id="auroraField"><div class="aurora-blob"></div><div class="aurora-blob"></div><div class="aurora-blob"></div></div>
@@ -132,14 +133,13 @@
   </div>
 </div>
 
-<header>
-  <div class="brand">
-    <div class="tag" id="brandGreeting">JEE 2027 · PHYSICAL CHEMISTRY GRIND</div>
-    <h1>NEERAJ KUMAR PHYSICAL CHEMISTRY</h1>
-    <div class="ver-row"><span class="ver-chip">v2.0</span><span class="ver-new">NEW · ☁ CLOUD SYNC</span></div>
-  </div>
-
-  <div class="xp-hud">
+<header id="topbar">
+  <div class="tb-row">
+    <div class="brand">
+      <div class="tag" id="brandGreeting">JEE 2027 · PHYSICAL CHEMISTRY</div>
+      <h1>Neeraj Kumar <span>Chem Tracker</span></h1>
+    </div>
+    <div class="xp-hud">
     <div class="xp-level-badge">
       <div class="lv-num" id="hdrLevel">1</div>
       <div class="lv-lbl">LEVEL</div>
@@ -160,31 +160,23 @@
       <div class="cfb-lvl-tag" id="cfbLvlTag"></div>
     </div>
   </div>
-
-  <div class="game-mode-dock" id="gameModeDock">
-          <button class="bm-nav-btn active" data-portal="home">QUESTS</button>
+    <div class="hud-right">
+      <div class="hud-stats"><div class="hstat"><div class="v" id="statDone">0</div><div class="l">PTS DONE</div></div>
+    <div class="hstat"><div class="v" id="statPct">0%</div><div class="l">PROGRESS</div></div>
+    <div class="hstat streak"><div class="v" id="statStreak"><span id="flameIcon">🔥</span> 0</div><div class="l">STREAK</div></div></div>
+      <button class="btn sm" id="plannerBtn">PLANNER</button><button class="btn sm" id="logBtn">DAILY LOG</button><button class="btn sm" id="statsBtn">📊 STATS</button><button class="btn sm btn-new" id="syncBtn" title="NEW — Cloud sync">☁<i id="syncDot"></i></button>
+      <button class="btn sm" id="moreBtn" aria-label="More">⋯</button>
+      <div class="more-menu" id="moreMenu">
+        <button class="btn sm amber" id="goodBtn">★ GOOD QS</button><button class="btn sm" id="focusBtn">🎯 FOCUS</button><button class="btn sm purple" id="rulesBtn">🎮 GAME RULES</button><button class="btn sm" id="soundBtn">🔊</button><button class="btn sm" id="settingsBtn">⚙</button><button class="btn sm" id="exportBtn">EXPORT</button><button class="btn sm" id="importBtnLabel">IMPORT</button>
+        <input type="file" id="importFile" accept="application/json">
+      </div>
+    </div>
+  </div>
+  <div class="tb-tabs"><div class="game-mode-dock" id="gameModeDock"><button class="bm-nav-btn active" data-portal="home">QUESTS</button>
           <button class="bm-nav-btn" data-portal="conquered">CONQUERED <span id="conqueredCount">0</span></button>
           <button class="bm-nav-btn" data-portal="important">IMPORTANT <span id="importantCount">0</span></button>
           <button class="bm-nav-btn" id="chapterJourneyBtn">JOURNEY</button>
-          <button class="bm-nav-btn" id="pendingToggleBtn">ONLY LEFT</button>
-        </div>
-        <div class="hud-right">
-    <div class="hstat"><div class="v" id="statDone">0</div><div class="l">PTS DONE</div></div>
-    <div class="hstat"><div class="v" id="statPct">0%</div><div class="l">PROGRESS</div></div>
-    <div class="hstat streak"><div class="v" id="statStreak"><span id="flameIcon">🔥</span> 0</div><div class="l">STREAK</div></div>
-    <button class="btn sm" id="plannerBtn">PLANNER</button>
-    <button class="btn sm" id="logBtn">DAILY LOG</button>
-    <button class="btn sm amber" id="goodBtn">★ GOOD QS</button>
-    <button class="btn sm purple" id="rulesBtn">🎮 GAME RULES</button>
-    <button class="btn sm" id="statsBtn">📊 STATS</button>
-    <button class="btn sm" id="focusBtn">🎯 FOCUS</button>
-    <button class="btn sm" id="soundBtn">🔊</button>
-    <button class="btn sm btn-new" id="syncBtn" title="NEW — Cloud sync">☁<i id="syncDot"></i></button>
-    <button class="btn sm" id="settingsBtn">⚙</button>
-    <button class="btn sm" id="exportBtn">EXPORT</button>
-    <button class="btn sm" id="importBtnLabel">IMPORT</button>
-    <input type="file" id="importFile" accept="application/json">
-  </div>
+          <button class="bm-nav-btn" id="pendingToggleBtn">ONLY LEFT</button></div></div>
 </header>
 
 <div class="bm-mobile-bar" id="bmMobileBar">
@@ -522,5 +514,6 @@
 <script src="js/reorder.js"></script>
 <script src="js/cloud.js"></script>
 <script src="js/whatsnew.js"></script>
+<script src="js/ui3.js"></script>
 </body>
 </html>
