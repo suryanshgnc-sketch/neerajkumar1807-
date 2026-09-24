@@ -1,0 +1,81 @@
+/* ==========================================================
+   enhancements.css — v2.0 visual polish layer
+   Loaded AFTER styles.css, so it safely overrides it.
+   Tweak the tokens in :root to re-theme everything at once.
+   ========================================================== */
+:root{
+  --accent-a:#2ee6ff;            /* gradient start (cyan)   */
+  --accent-b:#7c6bff;            /* gradient end   (violet) */
+  --radius:12px;                 /* card / modal roundness  */
+  --glass:rgba(10,16,36,.72);    /* frosted panel colour    */
+  --line:rgba(120,150,210,.16);  /* soft borders            */
+  --shadow:0 10px 30px rgba(0,0,0,.45);
+}
+
+/* ---------- Base typography ---------- */
+body{font-family:'Inter',system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;
+  -webkit-font-smoothing:antialiased;line-height:1.5;}
+.btn,input,select,textarea{font-family:inherit;}
+::-webkit-scrollbar-thumb{background:linear-gradient(var(--accent-a),var(--accent-b));}
+:focus-visible{outline:2px solid var(--accent-a);outline-offset:2px;border-radius:6px;}
+
+/* ---------- Header ---------- */
+header{background:var(--glass) !important;backdrop-filter:blur(14px) saturate(140%);
+  -webkit-backdrop-filter:blur(14px) saturate(140%);
+  border-bottom:1px solid var(--line) !important;position:sticky;}
+header::after{content:"";position:absolute;left:0;right:0;bottom:-1px;height:1px;
+  background:linear-gradient(90deg,transparent,var(--accent-a),var(--accent-b),transparent);opacity:.7;}
+.brand h1{background:linear-gradient(90deg,var(--accent-a),var(--accent-b)) !important;
+  -webkit-background-clip:text !important;background-clip:text !important;-webkit-text-fill-color:transparent;
+  color:transparent !important;text-shadow:none !important;font-weight:700;letter-spacing:1.5px;}
+.ver-row{display:flex;gap:8px;align-items:center;margin-top:3px;}
+.ver-chip{font-size:9px;font-weight:700;letter-spacing:1px;padding:2px 7px;border-radius:99px;
+  background:linear-gradient(90deg,var(--accent-a),var(--accent-b));color:#03050d;}
+.ver-new{font-size:9px;letter-spacing:1.5px;color:var(--accent-a);animation:softPulse 2.4s ease-in-out infinite;}
+
+/* ---------- Buttons ---------- */
+.btn{border-radius:8px !important;padding:6px 12px;font-weight:600;
+  border:1px solid var(--line) !important;background:rgba(255,255,255,.03) !important;
+  transition:transform .15s,box-shadow .2s,background .2s,border-color .2s !important;}
+.btn.sm{padding:5px 10px;}
+.btn:hover{transform:translateY(-1px);border-color:var(--accent-a) !important;
+  background:linear-gradient(135deg,rgba(46,230,255,.18),rgba(124,107,255,.18)) !important;
+  color:#fff !important;box-shadow:0 6px 18px rgba(46,230,255,.16) !important;}
+.btn:active{transform:translateY(0) scale(.98);}
+.btn.danger:hover{background:rgba(255,77,106,.2) !important;border-color:var(--red) !important;}
+.btn-new{position:relative;border-color:var(--accent-a) !important;}
+.btn-new::after{content:"NEW";position:absolute;top:-8px;right:-8px;font-size:7.5px;font-weight:800;
+  letter-spacing:.5px;padding:1px 5px;border-radius:99px;color:#03050d;
+  background:linear-gradient(90deg,var(--accent-a),var(--accent-b));animation:softPulse 1.6s ease-in-out infinite;}
+.new-pill{font-size:8px;font-weight:800;padding:1px 6px;border-radius:99px;color:#03050d;
+  background:linear-gradient(90deg,var(--accent-a),var(--accent-b));vertical-align:middle;}
+
+/* ---------- Cards & panels ---------- */
+.card,.mission-card,.chapter-card{border-radius:var(--radius) !important;
+  border:1px solid var(--line) !important;background:var(--glass);
+  transition:transform .2s ease,box-shadow .25s ease,border-color .25s ease;}
+.card:hover,.mission-card:hover,.chapter-card:hover{transform:translateY(-2px);
+  border-color:rgba(46,230,255,.35) !important;box-shadow:var(--shadow);}
+.xp-bar-fill{background:linear-gradient(90deg,var(--accent-a),var(--accent-b)) !important;
+  box-shadow:0 0 12px rgba(46,230,255,.4) !important;border-radius:99px;}
+.xp-bar-outer{border-radius:99px;overflow:hidden;}
+.hstat{border-radius:10px;}
+
+/* ---------- Modals ---------- */
+.log-overlay{background:rgba(2,5,14,.78) !important;backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);}
+.log-modal{border-radius:18px !important;background:linear-gradient(180deg,rgba(14,22,48,.96),rgba(6,10,24,.98)) !important;
+  border:1px solid var(--line) !important;box-shadow:0 24px 70px rgba(0,0,0,.6) !important;animation:popIn .25s ease-out;}
+.log-modal-head h2{background:linear-gradient(90deg,var(--accent-a),var(--accent-b));
+  -webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;}
+
+/* ---------- Footer ---------- */
+footer{border-top:1px solid var(--line);margin-top:24px;padding:22px 16px !important;line-height:1.9;}
+footer .credit{display:inline-block;margin-top:8px;padding:5px 14px;border-radius:99px;
+  border:1px solid var(--line);background:rgba(46,230,255,.05);color:var(--text) !important;
+  font-size:10px !important;letter-spacing:1px !important;}
+footer .credit b{background:linear-gradient(90deg,var(--accent-a),var(--accent-b));
+  -webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;}
+
+/* ---------- Accessibility ---------- */
+@media (prefers-reduced-motion:reduce){*{animation-duration:.01ms !important;transition-duration:.01ms !important;}}
+@media (max-width:640px){.ver-row{display:none;}header{padding:8px 12px;}}
