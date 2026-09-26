@@ -76,6 +76,54 @@
       </div>`;
   }
 
+  function paceStatusHTML(){
+    if(!state.deadline) return `<div class="an-pace an-pace-none">🎯 No deadline set — set one in TARGET DEADLINE to unlock pace tracking.</div>`;
+    const {total,done} = weightedTotalCounts();
+    const remaining = total-done;
+    if(remaining<=0) return `<div class="an-pace an-pace-ahead">🎉 Book complete — nothing left to pace.</div>`;
+    const daysLeft = Math.ceil((new Date(state.deadline+'T23:59:59')-new Date())/86400000);
+    if(daysLeft<=0) return `<div class="an-pace an-pace-behind">⚠ Deadline passed with ${fmtNum(remaining)} pts remaining.</div>`;
+    const requiredPerDay = remaining/daysLeft;
+    let recentSum=0;
+    for(let i=0;i<7;i++) recentSum += (state.activity && state.activity[dateStrOffset(i)]) || 0;
+    const actualPerDay = recentSum/7;
+    let cls='an-pace-behind', label=`⚠ BEHIND PACE — need ${fmtNum(requiredPerDay)} pts/day, averaging ${fmtNum(actualPerDay)}`;
+    if(actualPerDay >= requiredPerDay*1.05){ cls='an-pace-ahead'; label=`🚀 AHEAD OF PACE — averaging ${fmtNum(actualPerDay)} pts/day vs ${fmtNum(requiredPerDay)} needed`; }
+    else if(actualPerDay >= requiredPerDay*0.95){ cls='an-pace-ontrack'; label=`✅ ON TRACK — averaging ${fmtNum(actualPerDay)} pts/day vs ${fmtNum(requiredPerDay)} needed`; }
+    return `<div class="an-pace ${cls}">${label}</div>`;
+  }
+
+  function buildShareText(){
+    const {total,done} = weightedTotalCounts();
+    const p = pct(done,total);
+    const streak = (state.streak&&state.streak.current)||0;
+    const sessions = state.sessions||[];
+    const hrs = (sessions.reduce((s,x)=>s+(x.durationSec||0),0)/3600).toFixed(1);
+    const rows = orderedChaptersSafe()
+      .filter(ch=>!isChapterSkipped(ch.id))
+      .map(ch=>{ const c=weightedChapterCounts(ch.id); return {name:ch.name,p:pct(c.done,c.total)}; })
+      .sort((a,b)=>a.p-b.p);
+    const weakest = rows[0];
+    const lines = [
+      `⚛️ NK Physical Chemistry — Progress Snapshot`,
+      `Overall: ${p}% (${fmtNum(done)}/${fmtNum(total)} pts)`,
+      `Streak: ${streak} days · Time logged: ${hrs}h`,
+    ];
+    if(weakest) lines.push(`Needs attention: ${weakest.name} (${weakest.p}%)`);
+    return lines.join('\n');
+  }
+
+  async function shareProgress(btn){
+    const text = buildShareText();
+    try{
+      await navigator.clipboard.writeText(text);
+      if(btn){ const old=btn.textContent; btn.textContent='COPIED ✓'; setTimeout(()=>btn.textContent=old,1600); }
+      if(typeof showToast==='function') showToast('📋 Progress summary copied','ach');
+    }catch(e){
+      if(typeof showToast==='function') showToast('Could not copy — clipboard blocked','warn');
+    }
+  }
+
   function weakestChapterNote(){
     const rows = orderedChaptersSafe()
       .filter(ch=>!isChapterSkipped(ch.id))
@@ -87,10 +135,31 @@
     return `<div class="an-note">📌 Lowest completion right now: <b>${weakest.name}</b> (${weakest.p}%) — consider queuing it next.</div>`;
   }
 
+  const COLLAPSE_KEY = 'nkAnalyticsCollapsed';
+  function isCollapsed(){ try{ return localStorage.getItem(COLLAPSE_KEY)==='1'; }catch(e){ return false; } }
+  function setCollapsed(v){ try{ localStorage.setItem(COLLAPSE_KEY, v?'1':'0'); }catch(e){} }
+
+  function wireCollapseBtn(){
+    const btn = document.getElementById('analyticsCollapseBtn');
+    const host = document.getElementById('analyticsPanel');
+    if(!btn||!host) return;
+    const apply = ()=>{
+      const c = isCollapsed();
+      host.style.display = c ? 'none' : '';
+      btn.textContent = c ? '▸' : '▾';
+    };
+    apply();
+    btn.onclick = ()=>{ setCollapsed(!isCollapsed()); apply(); };
+  }
+
   function renderAnalyticsPanel(){
     const host = document.getElementById('analyticsPanel');
     if(!host) return;
     host.innerHTML = `
+      <div class="an-top-row">
+        ${paceStatusHTML()}
+        <button class="btn sm" id="anShareBtn">📋 SHARE PROGRESS</button>
+      </div>
       ${timeStatsHTML()}
       <div class="an-cols">
         <div class="an-col">
@@ -104,6 +173,8 @@
       </div>
       ${weakestChapterNote()}
     `;
+    const shareBtn = document.getElementById('anShareBtn');
+    if(shareBtn) shareBtn.onclick = ()=>shareProgress(shareBtn);
   }
 
   // Hook into the existing render cycle without touching app.js
@@ -115,5 +186,6 @@
     };
   }
   renderAnalyticsPanel();
+  wireCollapseBtn();
   window.renderAnalyticsPanel = renderAnalyticsPanel;
 })();

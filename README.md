@@ -6,6 +6,9 @@ A black-first, gamified JEE Physical Chemistry planner with a configurable perso
 
 **Analytics (new)**
 - New **📈 ANALYTICS** card on the dashboard: a chapter-by-chapter completion leaderboard (sorted, so your weakest chapter is always visible at a glance), a GitHub-style activity heatmap of the last ~126 days, and a time-invested summary (hours logged, sessions, average Q/min, active days).
+- **Pace status** — tells you AHEAD / ON TRACK / BEHIND against your set deadline, based on your last 7 days of activity vs the pace you actually need.
+- **Share progress** — one click copies a short text snapshot (overall %, streak, hours logged, weakest chapter) to your clipboard, ready to paste anywhere.
+- Collapsible — the ▾ button in the card header remembers whether you left it open or closed.
 - Fully read-only and additive — it's computed from data you're already tracking (`state.activity`, `state.sessions`, chapter progress), so nothing about scoring, XP, or the planner changes.
 
 **Keyboard shortcuts (new)**

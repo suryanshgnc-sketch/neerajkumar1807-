@@ -1,4 +1,12 @@
 /* ── ANALYTICS PANEL ── */
+.an-top-row{display:flex;align-items:center;justify-content:space-between;gap:10px;
+  flex-wrap:wrap;margin-bottom:12px;}
+.an-pace{font-size:10.5px;padding:7px 12px;border-radius:8px;flex:1;min-width:220px;font-weight:600;}
+.an-pace-ahead{background:rgba(46,230,255,0.08);color:var(--green);border:1px solid rgba(46,230,255,0.25);}
+.an-pace-ontrack{background:rgba(255,176,32,0.08);color:var(--amber);border:1px solid rgba(255,176,32,0.25);}
+.an-pace-behind{background:rgba(255,77,106,0.08);color:var(--red);border:1px solid rgba(255,77,106,0.25);}
+.an-pace-none{background:rgba(120,150,210,0.06);color:var(--text-dim);border:1px solid var(--border);}
+
 .an-stat-strip{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:16px;}
 .an-stat{background:rgba(46,230,255,0.04);border:1px solid var(--line,var(--border));border-radius:10px;
   padding:10px 8px;text-align:center;}

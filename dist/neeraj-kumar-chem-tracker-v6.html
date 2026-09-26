@@ -1641,6 +1641,14 @@ html, body { min-height:100%; height:auto !important; overflow-x:hidden !importa
 </style>
 <style>
 /* ── ANALYTICS PANEL ── */
+.an-top-row{display:flex;align-items:center;justify-content:space-between;gap:10px;
+  flex-wrap:wrap;margin-bottom:12px;}
+.an-pace{font-size:10.5px;padding:7px 12px;border-radius:8px;flex:1;min-width:220px;font-weight:600;}
+.an-pace-ahead{background:rgba(46,230,255,0.08);color:var(--green);border:1px solid rgba(46,230,255,0.25);}
+.an-pace-ontrack{background:rgba(255,176,32,0.08);color:var(--amber);border:1px solid rgba(255,176,32,0.25);}
+.an-pace-behind{background:rgba(255,77,106,0.08);color:var(--red);border:1px solid rgba(255,77,106,0.25);}
+.an-pace-none{background:rgba(120,150,210,0.06);color:var(--text-dim);border:1px solid var(--border);}
+
 .an-stat-strip{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:16px;}
 .an-stat{background:rgba(46,230,255,0.04);border:1px solid var(--line,var(--border));border-radius:10px;
   padding:10px 8px;text-align:center;}
@@ -1965,7 +1973,9 @@ input:focus,select:focus,textarea:focus{border-color:var(--accent-a,var(--green)
 
     <!-- ANALYTICS — new in this update -->
     <div class="card">
-      <h3>📈 ANALYTICS <span class="new-pill">NEW</span></h3>
+      <h3>📈 ANALYTICS <span class="new-pill">NEW</span>
+        <button class="btn sm" id="analyticsCollapseBtn" style="margin-left:auto;padding:2px 8px;" title="Collapse/expand">▾</button>
+      </h3>
       <div id="analyticsPanel"></div>
     </div>
 
@@ -5639,7 +5649,7 @@ if(document.getElementById('reorderPanel').classList.contains('open')) renderReo
    Change VERSION_KEY when you ship a new release to show it again.
    ========================================================== */
 (function(){
-  const VERSION_KEY='nkV5BannerSeen', BADGE_KEY='nkV2CloudOpened';
+  const VERSION_KEY='nkV6BannerSeen', BADGE_KEY='nkV2CloudOpened';
   const CREDIT='suryansh1807';
   const store={get:k=>{try{return localStorage.getItem(k);}catch(e){return null;}},
                set:(k,v)=>{try{localStorage.setItem(k,v);}catch(e){}}};
@@ -5648,16 +5658,19 @@ if(document.getElementById('reorderPanel').classList.contains('open')) renderReo
   if(hdr && store.get(VERSION_KEY)!=='1'){
     const b=document.createElement('div');
     b.className='whatsnew big';
-    b.innerHTML=`<span class="wn-badge">🚀 BIG UPDATE · v5.0</span>
-      <span class="wn-text"><span class="wn-title">Meet AI assistant — your AI study coach, built into the Planner</span>
-      Clears backlog, builds day-wise plans, reorders chapters. Bring your own free API key (Gemini, Groq, OpenRouter or custom). You approve every change.
+    b.innerHTML=`<span class="wn-badge">🚀 UPDATE PUSHED · v6.0</span>
+      <span class="wn-text"><span class="wn-title">New: Analytics dashboard, keyboard shortcuts &amp; a visual polish pass</span>
+      Chapter leaderboard + activity heatmap + pace status, a "?" shortcuts cheat sheet, one-tap progress sharing, and a cleaner UI throughout.
       Made by <span class="wn-by">${CREDIT}</span>.</span>
-      <button class="btn sm" id="wnSetup">MEET AI assistant →</button>
+      <button class="btn sm" id="wnSetup">SEE WHAT'S NEW →</button>
       <button class="wn-x" id="wnClose" aria-label="Dismiss">✕</button>`;
     hdr.insertAdjacentElement('afterend',b);
     const close=()=>{store.set(VERSION_KEY,'1');b.remove();};
     b.querySelector('#wnClose').onclick=close;
-    b.querySelector('#wnSetup').onclick=()=>{close();if(window.openMDCCCVII)window.openMDCCCVII();};
+    b.querySelector('#wnSetup').onclick=()=>{
+      close();
+      document.getElementById('analyticsPanel')?.scrollIntoView({behavior:'smooth',block:'center'});
+    };
   }
 
   const sb=document.getElementById('syncBtn');
@@ -6355,6 +6368,54 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
       </div>`;
   }
 
+  function paceStatusHTML(){
+    if(!state.deadline) return `<div class="an-pace an-pace-none">🎯 No deadline set — set one in TARGET DEADLINE to unlock pace tracking.</div>`;
+    const {total,done} = weightedTotalCounts();
+    const remaining = total-done;
+    if(remaining<=0) return `<div class="an-pace an-pace-ahead">🎉 Book complete — nothing left to pace.</div>`;
+    const daysLeft = Math.ceil((new Date(state.deadline+'T23:59:59')-new Date())/86400000);
+    if(daysLeft<=0) return `<div class="an-pace an-pace-behind">⚠ Deadline passed with ${fmtNum(remaining)} pts remaining.</div>`;
+    const requiredPerDay = remaining/daysLeft;
+    let recentSum=0;
+    for(let i=0;i<7;i++) recentSum += (state.activity && state.activity[dateStrOffset(i)]) || 0;
+    const actualPerDay = recentSum/7;
+    let cls='an-pace-behind', label=`⚠ BEHIND PACE — need ${fmtNum(requiredPerDay)} pts/day, averaging ${fmtNum(actualPerDay)}`;
+    if(actualPerDay >= requiredPerDay*1.05){ cls='an-pace-ahead'; label=`🚀 AHEAD OF PACE — averaging ${fmtNum(actualPerDay)} pts/day vs ${fmtNum(requiredPerDay)} needed`; }
+    else if(actualPerDay >= requiredPerDay*0.95){ cls='an-pace-ontrack'; label=`✅ ON TRACK — averaging ${fmtNum(actualPerDay)} pts/day vs ${fmtNum(requiredPerDay)} needed`; }
+    return `<div class="an-pace ${cls}">${label}</div>`;
+  }
+
+  function buildShareText(){
+    const {total,done} = weightedTotalCounts();
+    const p = pct(done,total);
+    const streak = (state.streak&&state.streak.current)||0;
+    const sessions = state.sessions||[];
+    const hrs = (sessions.reduce((s,x)=>s+(x.durationSec||0),0)/3600).toFixed(1);
+    const rows = orderedChaptersSafe()
+      .filter(ch=>!isChapterSkipped(ch.id))
+      .map(ch=>{ const c=weightedChapterCounts(ch.id); return {name:ch.name,p:pct(c.done,c.total)}; })
+      .sort((a,b)=>a.p-b.p);
+    const weakest = rows[0];
+    const lines = [
+      `⚛️ NK Physical Chemistry — Progress Snapshot`,
+      `Overall: ${p}% (${fmtNum(done)}/${fmtNum(total)} pts)`,
+      `Streak: ${streak} days · Time logged: ${hrs}h`,
+    ];
+    if(weakest) lines.push(`Needs attention: ${weakest.name} (${weakest.p}%)`);
+    return lines.join('\n');
+  }
+
+  async function shareProgress(btn){
+    const text = buildShareText();
+    try{
+      await navigator.clipboard.writeText(text);
+      if(btn){ const old=btn.textContent; btn.textContent='COPIED ✓'; setTimeout(()=>btn.textContent=old,1600); }
+      if(typeof showToast==='function') showToast('📋 Progress summary copied','ach');
+    }catch(e){
+      if(typeof showToast==='function') showToast('Could not copy — clipboard blocked','warn');
+    }
+  }
+
   function weakestChapterNote(){
     const rows = orderedChaptersSafe()
       .filter(ch=>!isChapterSkipped(ch.id))
@@ -6366,10 +6427,31 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
     return `<div class="an-note">📌 Lowest completion right now: <b>${weakest.name}</b> (${weakest.p}%) — consider queuing it next.</div>`;
   }
 
+  const COLLAPSE_KEY = 'nkAnalyticsCollapsed';
+  function isCollapsed(){ try{ return localStorage.getItem(COLLAPSE_KEY)==='1'; }catch(e){ return false; } }
+  function setCollapsed(v){ try{ localStorage.setItem(COLLAPSE_KEY, v?'1':'0'); }catch(e){} }
+
+  function wireCollapseBtn(){
+    const btn = document.getElementById('analyticsCollapseBtn');
+    const host = document.getElementById('analyticsPanel');
+    if(!btn||!host) return;
+    const apply = ()=>{
+      const c = isCollapsed();
+      host.style.display = c ? 'none' : '';
+      btn.textContent = c ? '▸' : '▾';
+    };
+    apply();
+    btn.onclick = ()=>{ setCollapsed(!isCollapsed()); apply(); };
+  }
+
   function renderAnalyticsPanel(){
     const host = document.getElementById('analyticsPanel');
     if(!host) return;
     host.innerHTML = `
+      <div class="an-top-row">
+        ${paceStatusHTML()}
+        <button class="btn sm" id="anShareBtn">📋 SHARE PROGRESS</button>
+      </div>
       ${timeStatsHTML()}
       <div class="an-cols">
         <div class="an-col">
@@ -6383,6 +6465,8 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
       </div>
       ${weakestChapterNote()}
     `;
+    const shareBtn = document.getElementById('anShareBtn');
+    if(shareBtn) shareBtn.onclick = ()=>shareProgress(shareBtn);
   }
 
   // Hook into the existing render cycle without touching app.js
@@ -6394,6 +6478,7 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
     };
   }
   renderAnalyticsPanel();
+  wireCollapseBtn();
   window.renderAnalyticsPanel = renderAnalyticsPanel;
 })();
 
