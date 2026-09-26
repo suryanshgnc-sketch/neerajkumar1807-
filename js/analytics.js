@@ -159,6 +159,7 @@
       <div class="an-top-row">
         ${paceStatusHTML()}
         <button class="btn sm" id="anShareBtn">📋 SHARE PROGRESS</button>
+        <button class="btn sm purple" id="anShareCardBtn">🎴 SHARE CARD</button>
       </div>
       ${timeStatsHTML()}
       <div class="an-cols">
@@ -175,6 +176,8 @@
     `;
     const shareBtn = document.getElementById('anShareBtn');
     if(shareBtn) shareBtn.onclick = ()=>shareProgress(shareBtn);
+    const shareCardBtn = document.getElementById('anShareCardBtn');
+    if(shareCardBtn) shareCardBtn.onclick = ()=>{ if(typeof openShareCard==='function') openShareCard(); };
   }
 
   // Hook into the existing render cycle without touching app.js
