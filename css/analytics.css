@@ -1,0 +1,38 @@
+/* ── ANALYTICS PANEL ── */
+.an-stat-strip{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:16px;}
+.an-stat{background:rgba(46,230,255,0.04);border:1px solid var(--line,var(--border));border-radius:10px;
+  padding:10px 8px;text-align:center;}
+.an-stat-v{font-size:19px;font-weight:700;color:var(--green);letter-spacing:0.5px;
+  font-variant-numeric:tabular-nums;}
+.an-stat-l{font-size:8.5px;color:var(--text-dim);letter-spacing:1px;margin-top:2px;}
+
+.an-cols{display:grid;grid-template-columns:1.15fr 1fr;gap:22px;align-items:start;}
+@media(max-width:860px){.an-cols{grid-template-columns:1fr;}}
+
+.an-subhead{font-size:10px;letter-spacing:1.5px;color:var(--text-dim);margin-bottom:10px;font-weight:700;}
+
+.an-lb-list{display:flex;flex-direction:column;gap:8px;max-height:340px;overflow-y:auto;padding-right:4px;}
+.an-lb-row{display:grid;grid-template-columns:1fr 2fr 40px;gap:8px;align-items:center;}
+.an-lb-name{font-size:10.5px;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+  display:flex;align-items:center;gap:6px;}
+.an-lb-track{height:7px;border-radius:99px;background:var(--grid);overflow:hidden;}
+.an-lb-fill{height:100%;border-radius:99px;transition:width .5s cubic-bezier(.2,.8,.2,1);}
+.an-lb-pct{font-size:10px;color:var(--text-dim);text-align:right;font-variant-numeric:tabular-nums;}
+.an-tag{font-size:7px;letter-spacing:0.5px;padding:1px 5px;border-radius:99px;font-weight:700;flex-shrink:0;}
+.an-tag.an-done{background:rgba(46,230,255,0.15);color:var(--green);}
+.an-tag.an-skip{background:rgba(120,150,210,0.12);color:var(--text-dim);}
+
+.an-hm-grid{display:flex;gap:3px;overflow-x:auto;padding-bottom:4px;}
+.an-hm-col{display:flex;flex-direction:column;gap:3px;}
+.an-hm-cell{width:10px;height:10px;border-radius:2px;background:var(--grid);flex-shrink:0;}
+.an-hm-l0{background:var(--grid);}
+.an-hm-l1{background:rgba(46,230,255,0.25);}
+.an-hm-l2{background:rgba(46,230,255,0.48);}
+.an-hm-l3{background:rgba(46,230,255,0.72);}
+.an-hm-l4{background:var(--green);box-shadow:0 0 5px var(--green-glow);}
+.an-hm-legend{display:flex;align-items:center;gap:3px;font-size:8.5px;color:var(--text-dim);margin-top:8px;}
+.an-hm-legend .an-hm-cell{width:9px;height:9px;}
+
+.an-note{margin-top:16px;font-size:10.5px;color:var(--text-dim);padding:9px 12px;
+  border-left:2px solid var(--purple);background:rgba(124,107,255,0.05);border-radius:0 6px 6px 0;}
+.an-note-good{border-left-color:var(--green);background:rgba(46,230,255,0.05);}

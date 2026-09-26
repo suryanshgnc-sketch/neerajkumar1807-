@@ -1,6 +1,20 @@
-# Neeraj Kumar — Physical Chemistry Tracker · v5.0
+# Neeraj Kumar — Physical Chemistry Tracker · v6.0
 
 A black-first, gamified JEE Physical Chemistry planner with a configurable personal AI assistant.
+
+## v6.0 — Analytics, shortcuts & a visual polish pass
+
+**Analytics (new)**
+- New **📈 ANALYTICS** card on the dashboard: a chapter-by-chapter completion leaderboard (sorted, so your weakest chapter is always visible at a glance), a GitHub-style activity heatmap of the last ~126 days, and a time-invested summary (hours logged, sessions, average Q/min, active days).
+- Fully read-only and additive — it's computed from data you're already tracking (`state.activity`, `state.sessions`, chapter progress), so nothing about scoring, XP, or the planner changes.
+
+**Keyboard shortcuts (new)**
+- Press **?** anywhere to open a shortcuts cheat sheet — lists both the new shortcuts (`L` log, `P` planner, `S` stats, `G` good questions, `/` only-left filter) and the ones the tracker already had (`1-9` jump to chapter, `Enter` mark next question, `F` focus mode).
+- A small `shortcuts ?` hint sits in the header for discoverability.
+
+**Visual polish**
+- New `css/pro-polish.css` finishing pass: tighter section rhythm, crisper card headers, consistent button casing/spacing, refined focus states, and a subtle depth vignette.
+- No existing class names or layout structure were changed, so this pass is safe to drop or tweak independently of the core styles.
 
 ## v5.0 — AI connection + planner control upgrade
 

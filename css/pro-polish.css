@@ -1,0 +1,57 @@
+/* ==========================================================
+   pro-polish.css — v6 finishing pass
+   Loaded LAST. Refines spacing, hierarchy, and a few new
+   pieces of UI (shortcuts sheet, analytics header) without
+   touching the core layout or any JS-driven class names.
+   ========================================================== */
+
+/* ---------- Section rhythm ---------- */
+main > .card,main > .bottom-grid,main > .bottom-grid-wide,
+main > section,main > .missions-strip{margin-bottom:18px;}
+main > *:last-child{margin-bottom:0;}
+
+/* ---------- Card header polish ---------- */
+.card h3{display:flex;align-items:center;gap:8px;font-weight:700;}
+.card h3 .new-pill{margin-left:auto;}
+
+/* ---------- Hero HUD stat numbers ---------- */
+.hstat .v{font-variant-numeric:tabular-nums;letter-spacing:0.3px;}
+
+/* ---------- Achievements: crisper hover ---------- */
+.ach-item{cursor:default;}
+.ach-item:hover{border-color:var(--accent-a,var(--green-dim)) !important;
+  background:rgba(46,230,255,0.06) !important;transform:translateY(-1px);}
+
+/* ---------- Buttons: slightly tighter, consistent caps ---------- */
+.btn{text-transform:uppercase;font-size:10px;letter-spacing:0.6px;}
+
+/* ---------- Discoverability hint for shortcuts ---------- */
+.shortcuts-hint{font-size:8.5px;color:var(--text-dim);letter-spacing:0.5px;opacity:0.6;
+  display:flex;align-items:center;gap:4px;cursor:pointer;user-select:none;transition:opacity .2s;}
+.shortcuts-hint:hover{opacity:1;}
+.shortcuts-hint kbd{border:1px solid var(--border);border-radius:4px;padding:0 5px;font-family:inherit;}
+
+/* ---------- Shortcuts modal ---------- */
+.shortcuts-list{display:flex;flex-direction:column;gap:6px;}
+.sc-row{display:flex;align-items:center;gap:12px;padding:7px 4px;border-bottom:1px dashed var(--border);}
+.sc-row:last-child{border-bottom:none;}
+.sc-key{flex:0 0 auto;min-width:30px;text-align:center;padding:3px 8px;border-radius:6px;
+  border:1px solid var(--border);background:var(--bg2);color:var(--green);font-size:11px;
+  font-family:'Consolas','Courier New',monospace;font-weight:700;}
+.sc-label{font-size:11px;color:var(--text);}
+
+/* ---------- Analytics card icon accent ---------- */
+#analyticsPanel{margin-top:2px;}
+
+/* ---------- Subtle depth vignette (very light, no perf cost) ---------- */
+body::before{content:"";position:fixed;inset:0;pointer-events:none;z-index:0;
+  background:radial-gradient(ellipse 1200px 800px at 50% 0%,transparent 55%,rgba(0,0,0,0.35) 100%);}
+
+/* ---------- Focus ring consistency across custom controls ---------- */
+input:focus,select:focus,textarea:focus{border-color:var(--accent-a,var(--green)) !important;}
+
+/* ---------- Small screens: keep hero stats legible ---------- */
+@media(max-width:640px){
+  .an-stat-strip{grid-template-columns:repeat(2,1fr);}
+  .an-stat-v{font-size:16px;}
+}
